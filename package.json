@@ -1,0 +1,26 @@
+{
+  "name": "townhouses-shevchenkovo",
+  "version": "1.0.0",
+  "main": "image-slot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/welldonegit/townhouses-shevchenkovo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/welldonegit/townhouses-shevchenkovo/issues"
+  },
+  "homepage": "https://github.com/welldonegit/townhouses-shevchenkovo#readme",
+  "description": "",
+  "dependencies": {
+    "vite": "^8.1.5"
+  }
+}

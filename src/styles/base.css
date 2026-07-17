@@ -1,0 +1,16 @@
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+html,body{margin:0;}
+body{background:var(--c-bg);font-family:'Onest',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--c-ink);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;}
+a{color:var(--c-green);text-decoration:none;}
+a:hover{color:var(--c-accent);}
+img{display:block;}
+::selection{background:var(--c-accent);color:#F6F1E7;}
+
+.preload{position:fixed;inset:0;z-index:200;background:var(--c-bg-alt);display:flex;align-items:center;justify-content:center;transition:opacity .55s ease;}
+.preload.hide{opacity:0;pointer-events:none;}
+.preload-wm{text-align:center;animation:preblink 1.6s ease-in-out infinite;}
+.preload-wm span{display:block;font:700 clamp(20px,3.4vw,34px)/1.12 'Onest',sans-serif;letter-spacing:.14em;}
+.preload-wm .l1{color:var(--c-ink);}
+.preload-wm .l2{color:var(--c-green);margin-top:6px;}
+@keyframes preblink{0%,100%{opacity:.32}50%{opacity:1}}

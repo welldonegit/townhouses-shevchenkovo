@@ -1,0 +1,8 @@
+/* terms statement band */
+.terms{padding-top:var(--section-pt);padding-bottom:0;}
+.terms-eb{margin-bottom:clamp(22px,2.4vw,34px);}
+.terms-h{margin:0;font-weight:700;letter-spacing:-.025em;font-size:clamp(30px,4.6vw,48px);line-height:1.08;max-width:22ch;}
+.terms-h .mut{color:var(--c-mut);}
+.terms-h .tw{background:linear-gradient(90deg,var(--c-ink) 50%,#C9C6BC 50%);background-size:200% 100%;background-position:100% 0;-webkit-background-clip:text;background-clip:text;color:transparent;transition:background-position .18s linear;}
+@media (prefers-reduced-motion:reduce){.terms-h .tw{background-position:0 0;transition:none;}}
+.terms-cta{margin-top:clamp(30px,3vw,44px);display:flex;gap:14px;flex-wrap:wrap;}

@@ -1,0 +1,14 @@
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{background:#F5F2EA;font-family:'Onest',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#17201D;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+a{color:#294239;text-decoration:none;}
+a:hover{color:#BC6848;}
+@keyframes tkUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:none;}}
+@keyframes tkPop{0%{opacity:0;transform:scale(.6);}60%{transform:scale(1.08);}100%{opacity:1;transform:scale(1);}}
+@keyframes tkDraw{to{stroke-dashoffset:0;}}
+.tbtn .roll{display:block;overflow:hidden;position:relative;}
+.tbtn .roll-in{display:block;transition:transform .5s cubic-bezier(.6,0,.2,1);}
+.tbtn .roll-in::after{content:attr(data-text);position:absolute;left:0;top:100%;width:100%;text-align:center;}
+.tbtn:hover .roll-in{transform:translateY(-100%);}
+.tbtn:hover{background:#A9573A;}
+@media (prefers-reduced-motion:reduce){.tk-anim{animation:none !important;}}

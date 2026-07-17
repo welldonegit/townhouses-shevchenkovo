@@ -1,0 +1,41 @@
+:root {
+  /* --- colors --- */
+  --c-ink: #17201D;
+  --c-green: #294239;
+  --c-green-dk: #1E322A;
+  --c-accent: #BC6848;
+  --c-accent-dk: #A5573B;
+  --c-bg: #F5F2EA;
+  --c-bg-alt: #F3F0E8;
+  --c-text: #5C665F;
+  --c-mut: #AEB0A2;
+  --c-grey: #9A9C90;
+  --c-eyebrow: #8A8F86;
+  --c-line: #E0DBCF;
+  --c-line-soft: #D8D4CA;
+  --c-line-field: #DDD8CC;
+  --c-surface: #E7E2D6;
+  --c-surface-2: #E3DED1;
+  --c-beige: #EEE8DC;
+  --c-beige-2: #ECE7DC;
+  --c-beige-line: #E1DBCD;
+  --c-field: #FBF9F3;
+  --c-cream-1: #F5F1E7;
+  --c-cream-2: #F3EFE4;
+  --c-cream-3: #F8F3EA;
+  --c-cream-4: #F6F2E8;
+  --c-line-2: #E4E0D5;
+  --c-green-tint: #C2CDC5;
+  --c-green-tint-2: #93A79B;
+
+  /* --- radii --- */
+  --radius-pill: 999px;
+  --radius-lg: 22px;
+  --radius-xl: 24px;
+  --radius-md: 14px;
+
+  /* --- spacing / layout --- */
+  --container-max: 1440px;
+  --container-pad: clamp(20px,5vw,80px);
+  --section-pt: clamp(48px,7vw,100px);
+}
