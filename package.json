@@ -1,12 +1,19 @@
 {
   "name": "townhouses-shevchenkovo",
   "version": "1.0.0",
-  "main": "image-slot.js",
+  "main": "index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0",
+    "server": "node index.js",
+    "start": "node index.js",
+    "postinstall": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -21,6 +28,7 @@
   "homepage": "https://github.com/welldonegit/townhouses-shevchenkovo#readme",
   "description": "",
   "dependencies": {
+    "express": "^5.2.1",
     "vite": "^8.1.5"
   }
 }

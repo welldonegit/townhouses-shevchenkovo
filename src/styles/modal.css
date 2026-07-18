@@ -73,3 +73,5 @@
 .mfield:focus{border-color:var(--c-green);box-shadow:0 0 0 3px rgba(41,66,57,.12);}
 .mform .mcta{margin-top:0;flex:none;}
 .mnote{border-top:1px solid var(--c-line);padding:16px clamp(26px,2.8vw,42px);font:400 12.5px/1.5 'Onest',sans-serif;color:var(--c-grey);}
+/* Сообщения об ошибках форм (валидация телефона и отправка) — единый стиль. */
+.phone-error,.form-error{margin-top:6px;font:500 12px/1.35 'Onest',sans-serif;color:#C0392B;}

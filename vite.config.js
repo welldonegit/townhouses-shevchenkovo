@@ -7,13 +7,17 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   appType: 'mpa',
   publicDir: 'public',
+  // В dev проксируем /api на локальный Express (npm run server).
+  server: {
+    proxy: { '/api': 'http://localhost:3000' },
+  },
   build: {
     outDir: 'dist',
     emptyOutDir: true,
     rollupOptions: {
       input: {
         main: 'index.html',
-        thanks: 'thanks.html',
+        thanks: 'thanks/index.html',
       },
     },
   },

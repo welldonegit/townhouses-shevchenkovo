@@ -5,6 +5,7 @@ import { initNavigation, isMenuOpen, closeMenu } from './navigation.js';
 import { initSlider } from './slider.js';
 import { initGenplan } from './genplan.js';
 import { initTabs } from './tabs.js';
+import { initPhoneInputs } from './phone-input.js';
 import { initForms } from './form.js';
 import { initEffects } from './effects.js';
 
@@ -15,6 +16,7 @@ function init() {
   initSlider();
   initGenplan();
   initTabs();
+  initPhoneInputs(); // маска + UI-валидация телефонов до навешивания submit
   initForms();
   initEffects();
 

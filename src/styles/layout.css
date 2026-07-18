@@ -6,6 +6,7 @@
 /* pills */
 .pill{display:inline-flex;align-items:center;justify-content:center;gap:9px;border-radius:var(--radius-pill);padding:15px 27px;font:600 15px/1 'Onest',sans-serif;letter-spacing:.005em;cursor:pointer;border:1px solid transparent;transition:background .2s,color .2s,border-color .2s,transform .2s;white-space:nowrap;}
 .pill:active{transform:translateY(1px);}
+.pill:disabled,.pill[disabled]{opacity:.6;pointer-events:none;}
 .pill-dark{background:var(--c-green);color:var(--c-bg);}
 .pill-dark:hover{background:var(--c-green-dk);color:var(--c-bg);}
 .pill-accent{background:var(--c-accent);color:var(--c-cream-3);}
