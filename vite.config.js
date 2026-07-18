@@ -14,6 +14,9 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+    // Не копируем public/ в dist: изображения отдаём из public/ напрямую (Express),
+    // чтобы не дублировать ~8 МБ картинок в собранной папке и в git.
+    copyPublicDir: false,
     rollupOptions: {
       input: {
         main: 'index.html',

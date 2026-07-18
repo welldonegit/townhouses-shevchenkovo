@@ -8,6 +8,7 @@ import { leadsRouter } from './routes/leads.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(__dirname, '..', 'dist'); // абсолютный путь, относительно этого файла
+const publicDir = path.join(__dirname, '..', 'public'); // изображения (не копируются в dist)
 
 // В production не запускаем сайт «вслепую» без собранного фронтенда.
 if (config.isProd && !fs.existsSync(path.join(distDir, 'index.html'))) {
@@ -33,8 +34,10 @@ app.get('/api/health', (req, res) => res.json({ ok: true }));
 // Неизвестный /api/* — контролируемый JSON, а не HTML.
 app.use('/api', (req, res) => res.status(404).json({ ok: false, error: 'not_found' }));
 
-// --- раздача собранного фронтенда (/thanks/ = dist/thanks/index.html) ---
+// --- раздача собранного фронтенда (dist) + изображений из public/ ---
+// public/ не копируется в dist (copyPublicDir:false) — отдаём его вторым статик-корнем.
 app.use(express.static(distDir));
+app.use(express.static(publicDir));
 
 // Канонический URL страницы подяки: старые пути 301-редиректят на /thanks/.
 app.get(/^\/thanks$/, (req, res) => res.redirect(301, '/thanks/'));

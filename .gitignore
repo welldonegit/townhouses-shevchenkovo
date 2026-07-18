@@ -1,3 +1,6 @@
+# OS junk
+.DS_Store
+
 # Logs
 logs
 *.log
@@ -83,7 +86,7 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+# dist — коммитим готовую сборку, чтобы не собирать на хостинге
 .output
 
 # Gatsby files
