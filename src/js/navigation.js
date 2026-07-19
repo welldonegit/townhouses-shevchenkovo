@@ -31,6 +31,25 @@ export function initNavigation() {
       const el = document.getElementById('houses');
       if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
     }));
+
+  // Навигация по секциям: плавный якорный скролл с учётом высоты залипающей шапки.
+  const headerEl = document.querySelector('.hdr');
+  const scrollToTarget = (hash) => {
+    if (!hash || hash === '#' || hash === '#top') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    const el = document.querySelector(hash);
+    if (!el) return;
+    const offset = headerEl ? headerEl.offsetHeight : 0;
+    window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
+  };
+  document.querySelectorAll('[data-scroll]').forEach((a) =>
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      setMenu(false); // закрыть мобильное меню, если открыто
+      scrollToTarget(a.getAttribute('href'));
+    }));
 }
 
 export function isMenuOpen() {

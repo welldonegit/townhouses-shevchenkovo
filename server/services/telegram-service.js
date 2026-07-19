@@ -10,6 +10,7 @@ export const FORM_LABELS = {
   instal: 'Розстрочка від забудовника',
   callback: 'Замовити дзвінок',
   house: 'Заявка з картки будинку',
+  presentation: 'Запис на презентацію',
   unknown: 'Заявка з сайту',
 };
 
