@@ -2,7 +2,7 @@
 // Без сторонних библиотек масок. Правила проверки берутся из shared/phone.js.
 import { isValidUaMobile, PHONE_ERROR_TEXT } from '../shared/phone.js';
 
-const FIXED = '+38 (0'; // визуально фиксированный префикс; редактируется только абонентская часть
+const FIXED = '+38 ('; // фиксированный префикс; национальный номер (с ведущим 0) вводит пользователь
 const errEls = new Map();
 const touched = new Set();
 
@@ -43,28 +43,28 @@ function toggleError(el, show) {
 }
 
 // ── Маска ────────────────────────────────────────────────────────────────
-// Абонентская часть — 9 цифр без ведущего 0 (коды операторов не начинаются с 0),
-// поэтому ведущие нули/код страны из ввода можно безопасно срезать.
-function extractSub(raw) {
+// Национальный номер: ведущий 0 + до 9 цифр абонента (0XX XXX XX XX).
+// Ведущий 0 вводится пользователем («так все вводят»), поэтому сохраняем его.
+function extractNational(raw) {
   let d = String(raw || '').replace(/\D/g, '');
-  if (d.startsWith('380')) d = d.slice(3);
-  else if (d.startsWith('38')) d = d.slice(2);
-  d = d.replace(/^0+/, '');
-  return d.slice(0, 9);
+  if (d.startsWith('380')) d = d.slice(2);                     // +380XXXXXXXXX → 0XXXXXXXXX
+  else if (d.startsWith('38') && d.length >= 11) d = '0' + d.slice(2); // 38 + 9 → 0 + 9
+  if (d && d[0] !== '0') d = '0' + d;                          // если ведущий 0 не ввели — добавляем
+  return d.slice(0, 10);
 }
 
-function format(sub) {
-  if (!sub) return '';
-  let s = FIXED + sub.slice(0, 2);
-  if (sub.length >= 2) s += ')';
-  if (sub.length > 2) s += ' ' + sub.slice(2, 5);
-  if (sub.length > 5) s += '-' + sub.slice(5, 7);
-  if (sub.length > 7) s += '-' + sub.slice(7, 9);
+function format(nat) {
+  if (!nat) return '';
+  let s = FIXED + nat.slice(0, 3);        // +38 (0XX
+  if (nat.length >= 3) s += ')';          // закрываем скобку после кода 0XX
+  if (nat.length > 3) s += ' ' + nat.slice(3, 6);
+  if (nat.length > 6) s += '-' + nat.slice(6, 8);
+  if (nat.length > 8) s += '-' + nat.slice(8, 10);
   return s;
 }
 
-// Позиция каретки после n абонентских цифр в отформатированной строке.
-function caretForSub(formatted, n) {
+// Позиция каретки после n цифр национального номера в отформатированной строке.
+function caretForNational(formatted, n) {
   if (n <= 0) return Math.min(FIXED.length, formatted.length);
   for (let i = FIXED.length; i <= formatted.length; i++) {
     if (formatted.slice(FIXED.length, i).replace(/\D/g, '').length >= n) return i;
@@ -75,12 +75,12 @@ function caretForSub(formatted, n) {
 function reformat(el) {
   const val = el.value;
   const selStart = el.selectionStart == null ? val.length : el.selectionStart;
-  // Сколько абонентских цифр стоит ДО каретки — считаем той же нормализацией,
+  // Сколько цифр номера стоит ДО каретки — считаем той же нормализацией,
   // поэтому позиция сохраняется при вводе, вставке, Backspace и Delete.
-  const subBefore = extractSub(val.slice(0, selStart)).length;
-  const sub = extractSub(val);
-  const formatted = format(sub);
+  const before = extractNational(val.slice(0, selStart)).length;
+  const nat = extractNational(val);
+  const formatted = format(nat);
   if (formatted !== val) el.value = formatted;
-  const pos = caretForSub(formatted, Math.min(subBefore, sub.length));
+  const pos = caretForNational(formatted, Math.min(before, nat.length));
   try { el.setSelectionRange(pos, pos); } catch { /* некоторые типы input не поддерживают */ }
 }

@@ -18,7 +18,10 @@ export const FORM_LABELS = {
 // При любой проблеме — { ok:false, error } с техническим кодом (без ПДн).
 export async function sendToTelegram(data) {
   const { botToken, chatId, apiBase } = config.telegram;
-  if (!botToken || !chatId) return { ok: false, error: 'not_configured' };
+  if (!botToken || !chatId) {
+    console.warn('[telegram]', { error: 'not_configured' });
+    return { ok: false, error: 'not_configured' };
+  }
 
   const url = `${apiBase}/bot${botToken}/sendMessage`;
   try {
@@ -31,13 +34,17 @@ export async function sendToTelegram(data) {
       },
       config.externalTimeoutMs,
     );
-    if (!res.ok) return { ok: false, error: 'telegram_http_' + res.status };
     const json = await res.json().catch(() => null);
-    if (!json || json.ok !== true) return { ok: false, error: 'telegram_api_error' };
+    if (!res.ok || !json || json.ok !== true) {
+      // description от Telegram (напр. "chat not found", "Unauthorized") — без ПДн клиента.
+      console.warn('[telegram]', { status: res.status, description: json && json.description });
+      return { ok: false, error: 'telegram_http_' + res.status };
+    }
     return { ok: true };
   } catch (err) {
-    // AbortError = таймаут; иначе — сетевая ошибка.
-    return { ok: false, error: err && err.name === 'AbortError' ? 'telegram_timeout' : 'telegram_network' };
+    const code = err && err.name === 'AbortError' ? 'timeout' : 'network';
+    console.warn('[telegram]', { error: code });
+    return { ok: false, error: 'telegram_' + code };
   }
 }
 
