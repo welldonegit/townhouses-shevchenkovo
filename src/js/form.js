@@ -56,8 +56,11 @@ async function onSubmit(e, form) {
       redirect(); // уходим на страницу подяки — форму busy не снимаем
       return;
     }
+    // Диагностика: код статуса + причина по каналам (без ПДн) — видно в консоли браузера.
+    console.warn('[lead] не доставлено:', res.status, (json && (json.channels || json.error)) || '(нет тела ответа)');
     fail(form);
-  } catch {
+  } catch (err) {
+    console.warn('[lead] сетевая ошибка запроса:', err && err.message);
     fail(form); // network error / прерывание — не редиректим, показываем ошибку
   }
 }

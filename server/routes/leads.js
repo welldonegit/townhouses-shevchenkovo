@@ -33,8 +33,6 @@ setInterval(() => {
   }
 }, config.rateLimit.windowMs).unref();
 
-const settled = (r) => (r.status === 'fulfilled' && r.value && r.value.ok === true);
-
 leadsRouter.post('/', rateLimit, async (req, res, next) => {
   try {
     const { valid, errors, data } = validateLead(req.body);
@@ -52,14 +50,29 @@ leadsRouter.post('/', rateLimit, async (req, res, next) => {
       sendToTelegram(data),
       sendToPipedrive(data, submissionId),
     ]);
-    const telegram = settled(tg);
-    const pipedrive = settled(pd);
+    const tgVal = tg.status === 'fulfilled' && tg.value ? tg.value : { ok: false, error: 'crashed' };
+    const pdVal = pd.status === 'fulfilled' && pd.value ? pd.value : { ok: false, error: 'crashed' };
+    const telegram = tgVal.ok === true;
+    const pipedrive = pdVal.ok === true;
 
-    // Техлог: только submissionId/тип/результаты каналов, без ПДн.
-    console.info('[lead]', { submissionId, formType: data.formType, telegram, pipedrive, stored: storage.ok });
+    // Техлог: submissionId/тип/коды каналов, без ПДн.
+    console.info('[lead]', {
+      submissionId,
+      formType: data.formType,
+      telegram: telegram ? 'ok' : tgVal.error,
+      pipedrive: pipedrive ? 'ok' : pdVal.error,
+      stored: storage.ok,
+    });
 
     const ok = telegram || pipedrive;
-    return res.status(ok ? 201 : 503).json({ ok, channels: { telegram, pipedrive } });
+    // channels содержит технический код при провале канала (для диагностики; без ПДн/токенов).
+    return res.status(ok ? 201 : 503).json({
+      ok,
+      channels: {
+        telegram: telegram ? true : (tgVal.error || false),
+        pipedrive: pipedrive ? true : (pdVal.error || false),
+      },
+    });
   } catch (err) {
     return next(err);
   }
