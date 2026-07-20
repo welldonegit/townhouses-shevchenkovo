@@ -1,7 +1,9 @@
 .wrap{max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad);}
 
 .eb{font:600 12px/1 'Onest',sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--c-eyebrow);}
-.eb-loc{display:inline-flex;align-items:center;gap:8px;}
+/* Текст в две строки: обёрнут в span, иначе <br> внутри inline-flex не сработает.
+   line-height задан явно — у .eb он равен 1, для двух строк этого мало. */
+.eb-loc{display:inline-flex;align-items:center;gap:8px;line-height:18px;}
 
 /* pills */
 .pill{display:inline-flex;align-items:center;justify-content:center;gap:9px;border-radius:var(--radius-pill);padding:15px 27px;font:600 15px/1 'Onest',sans-serif;letter-spacing:.005em;cursor:pointer;border:1px solid transparent;transition:background .2s,color .2s,border-color .2s,transform .2s;white-space:nowrap;}

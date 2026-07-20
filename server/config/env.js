@@ -38,6 +38,13 @@ export const config = {
     // База Bot API. По умолчанию — официальный сервер; переопределяется для тестов.
     apiBase: process.env.TELEGRAM_API_BASE || 'https://api.telegram.org',
   },
+  // Google Apps Script Web App (третий канал). Без googleapis и Service Account —
+  // обычный POST JSON на /exec. Пустые значения = канал выключен.
+  googleSheets: {
+    url: process.env.GOOGLE_APPS_SCRIPT_URL || '',
+    secret: process.env.GOOGLE_APPS_SCRIPT_SECRET || '',
+    timeoutMs: num(process.env.GOOGLE_APPS_SCRIPT_TIMEOUT_MS, 10000),
+  },
   pipedrive: {
     apiToken: process.env.PIPEDRIVE_API_TOKEN || '',
     companyDomain: process.env.PIPEDRIVE_COMPANY_DOMAIN || '',

@@ -1,6 +1,6 @@
 // POST /api/leads — приём заявки: строгая валидация, резервное сохранение,
-// независимая доставка в Telegram и Pipedrive (Promise.allSettled).
-// ok:true, если сработал хотя бы один канал; оба провалились → 503.
+// независимая доставка в Telegram, Pipedrive и Google Sheets (Promise.allSettled).
+// ok:true, если сработал хотя бы один канал; все три провалились → 503.
 import express from 'express';
 import { randomUUID } from 'crypto';
 import { config } from '../config/env.js';
@@ -8,6 +8,7 @@ import { validateLead } from '../validation/lead-validation.js';
 import { saveLead } from '../services/lead-storage.js';
 import { sendToTelegram } from '../services/telegram-service.js';
 import { sendToPipedrive } from '../services/pipedrive-service.js';
+import { sendToGoogleSheets } from '../services/google-sheets-service.js';
 
 export const leadsRouter = express.Router();
 
@@ -45,15 +46,18 @@ leadsRouter.post('/', rateLimit, async (req, res, next) => {
     // Резервное сохранение (защитная сетка) — до отправки.
     const storage = await saveLead({ ...data, submissionId, ts: new Date().toISOString() });
 
-    // Каналы независимы: провал одного не влияет на другой.
-    const [tg, pd] = await Promise.allSettled([
+    // Каналы независимы: провал одного не влияет на остальные.
+    const [tg, pd, gs] = await Promise.allSettled([
       sendToTelegram(data),
       sendToPipedrive(data, submissionId),
+      sendToGoogleSheets(data, submissionId),
     ]);
     const tgVal = tg.status === 'fulfilled' && tg.value ? tg.value : { ok: false, error: 'crashed' };
     const pdVal = pd.status === 'fulfilled' && pd.value ? pd.value : { ok: false, error: 'crashed' };
+    const gsVal = gs.status === 'fulfilled' && gs.value ? gs.value : { ok: false, reason: 'crashed' };
     const telegram = tgVal.ok === true;
     const pipedrive = pdVal.ok === true;
+    const googleSheets = gsVal.ok === true;
 
     // Техлог: submissionId/тип/коды каналов, без ПДн.
     console.info('[lead]', {
@@ -61,16 +65,18 @@ leadsRouter.post('/', rateLimit, async (req, res, next) => {
       formType: data.formType,
       telegram: telegram ? 'ok' : tgVal.error,
       pipedrive: pipedrive ? 'ok' : pdVal.error,
+      googleSheets: googleSheets ? 'ok' : gsVal.reason,
       stored: storage.ok,
     });
 
-    const ok = telegram || pipedrive;
+    const ok = telegram || pipedrive || googleSheets;
     // channels содержит технический код при провале канала (для диагностики; без ПДн/токенов).
     return res.status(ok ? 201 : 503).json({
       ok,
       channels: {
         telegram: telegram ? true : (tgVal.error || false),
         pipedrive: pipedrive ? true : (pdVal.error || false),
+        googleSheets: googleSheets ? true : (gsVal.reason || false),
       },
     });
   } catch (err) {

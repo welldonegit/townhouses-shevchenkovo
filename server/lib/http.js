@@ -6,7 +6,10 @@
 import http from 'http';
 import https from 'https';
 
-export function fetchWithTimeout(url, options = {}, timeoutMs = 8000) {
+// maxRedirects: модули http/https, в отличие от fetch, редиректы не следуют.
+// Это нужно Google Apps Script — на doPost он отвечает 302 на googleusercontent.com.
+// Таймаут применяется к каждому переходу отдельно, не ко всей цепочке.
+export function fetchWithTimeout(url, options = {}, timeoutMs = 8000, maxRedirects = 5) {
   return new Promise((resolve, reject) => {
     let u;
     try {
@@ -17,14 +20,38 @@ export function fetchWithTimeout(url, options = {}, timeoutMs = 8000) {
     }
     const lib = u.protocol === 'http:' ? http : https;
     const headers = { ...(options.headers || {}) };
+    const method = options.method || 'GET';
     if (options.body != null && headers['Content-Length'] == null) {
       headers['Content-Length'] = Buffer.byteLength(options.body);
     }
 
     const req = lib.request(
       u,
-      { method: options.method || 'GET', headers, timeout: timeoutMs },
+      { method, headers, timeout: timeoutMs },
       (res) => {
+        const loc = res.headers.location;
+        if (res.statusCode >= 300 && res.statusCode < 400 && loc && maxRedirects > 0) {
+          res.resume(); // освобождаем сокет, тело редиректа не нужно
+          // 301/302/303 после POST превращаются в GET без тела (как делает fetch
+          // и браузер); 307/308 сохраняют метод и тело.
+          const keepMethod = res.statusCode === 307 || res.statusCode === 308;
+          const nextHeaders = { ...headers };
+          if (!keepMethod) {
+            delete nextHeaders['Content-Length'];
+            delete nextHeaders['Content-Type'];
+          }
+          fetchWithTimeout(
+            new URL(loc, u).toString(),
+            {
+              method: keepMethod ? method : 'GET',
+              headers: nextHeaders,
+              body: keepMethod ? options.body : undefined,
+            },
+            timeoutMs,
+            maxRedirects - 1,
+          ).then(resolve, reject);
+          return;
+        }
         let data = '';
         res.setEncoding('utf8');
         res.on('data', (chunk) => { data += chunk; });
