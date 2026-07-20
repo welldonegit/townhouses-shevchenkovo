@@ -1,7 +1,10 @@
 /* Плавающий виджет связи (телефон + мессенджеры). Разметку строит contact-widget.js. */
 .msgr{position:fixed;right:clamp(16px,2.4vw,32px);bottom:clamp(16px,2.4vw,32px);z-index:100;display:flex;flex-direction:column;align-items:center;gap:12px;font-family:'Onest',sans-serif;transition:transform .35s ease;}
 .msgr-list{display:flex;flex-direction:column;align-items:center;gap:12px;}
-.msgr-i{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(20,26,22,.24);opacity:0;transform:translateY(16px) scale(.7);pointer-events:none;transition:opacity .32s ease,transform .32s cubic-bezier(.2,.8,.3,1.2);}
+/* Белая подложка под иконками: логотип Viber нарисован одним цветом с
+   fill-rule:evenodd, трубка внутри — прозрачная дырка. Без подложки сквозь неё
+   просвечивает страница. Остальные иконки имеют непрозрачный фон и её не видят. */
+.msgr-i{width:52px;height:52px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(20,26,22,.24);opacity:0;transform:translateY(16px) scale(.7);pointer-events:none;transition:opacity .32s ease,transform .32s cubic-bezier(.2,.8,.3,1.2);}
 .msgr-i svg{width:26px;height:26px;display:block;}
 .msgr-i:hover{transform:scale(1.08);}
 .msgr.open .msgr-i{opacity:1;transform:none;pointer-events:auto;}
@@ -13,7 +16,7 @@
 .msgr.open .msgr-i:nth-child(6){transition-delay:0s;}
 .mi-phone{background:#111;}
 .mi-tg{background:#29A9EB;}
-.mi-viber{background:transparent;}
+/* Своего фона нет — сквозь прозрачную трубку видна белая подложка .msgr-i. */
 .mi-viber img{width:100%;height:100%;border-radius:50%;display:block;}
 .mi-wa{background:#25D366;}
 .mi-fb{background:#0A7CFF;}
