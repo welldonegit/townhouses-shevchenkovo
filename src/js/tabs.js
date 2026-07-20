@@ -16,13 +16,14 @@ export function initTabs() {
   const render = () => {
     const set = REMONT[reType] || REMONT.compact;
     const visible = showAll ? set : set.slice(0, 8);
-    grid.replaceChildren(...visible.map((t) => {
+    grid.replaceChildren(...visible.map((t, i) => {
       const cell = document.createElement('div');
       cell.className = 'rl-cell';
       const img = document.createElement('img');
       img.src = t.src; img.alt = 'Рендер інтер’єру';
       cell.appendChild(img);
-      cell.addEventListener('click', () => openLightbox(t.src));
+      // Листаем весь набор таба (не только видимые 8); индекс в срезе совпадает с индексом в наборе.
+      cell.addEventListener('click', () => openLightbox(set, i));
       return cell;
     }));
     grid.className = 'rl-set on anim-' + (anim % 2);

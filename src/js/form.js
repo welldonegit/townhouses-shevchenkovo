@@ -21,7 +21,6 @@ export function initForms() {
 
 async function onSubmit(e, form) {
   e.preventDefault();
-  console.log('еще одна проверка'); // маркер: подтверждает, что на проде свежий фронт-код
   if (form.dataset.busy) return; // не допускаем повторную отправку
   hideError(form);
 

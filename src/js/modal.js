@@ -123,16 +123,39 @@ function closeLead() {
   updateScrollLock();
 }
 
-// ── Лайтбокс ремонту ────────────────────────────────────────────────────
-export function openLightbox(src) {
-  const img = lightbox.querySelector('img');
-  if (img) img.src = src;
+// ── Лайтбокс ремонту (галерея: стрелки, свайп, клавиши ←/→) ───────────────
+let lbItems = [];
+let lbIndex = 0;
+let lbImg = null;
+let lbCount = null;
+
+export function openLightbox(items, index = 0) {
+  lbItems = Array.isArray(items) ? items : [items];
+  lbIndex = Math.max(0, Math.min(index, lbItems.length - 1));
+  lbRender();
   show(lightbox);
+}
+function lbRender() {
+  const it = lbItems[lbIndex];
+  const src = typeof it === 'string' ? it : (it && it.src);
+  if (lbImg && src) lbImg.src = src;
+  const many = lbItems.length > 1;
+  if (lbCount) {
+    lbCount.style.display = many ? '' : 'none';
+    lbCount.textContent = (lbIndex + 1) + ' / ' + lbItems.length;
+  }
+  lightbox.querySelectorAll('.rl-lb-nav').forEach((b) => { b.style.display = many ? '' : 'none'; });
+}
+function lbStep(dir) {
+  if (lbItems.length < 2) return;
+  lbIndex = (lbIndex + dir + lbItems.length) % lbItems.length;
+  lbRender();
 }
 function closeLightbox() { hide(lightbox); }
 
 // ── Escape-стек (как в исходнике: зум → лід → будинок; лайтбокс закрывается кликом) ──
 export function handleEscape() {
+  if (isShown(lightbox)) { closeLightbox(); return true; }
   if (zoomed) { closeZoom(); return true; }
   if (isShown(leadModal)) { closeLead(); return true; }
   if (isShown(houseModal)) { closeHouse(); return true; }
@@ -178,8 +201,28 @@ export function initModal() {
   leadModal.addEventListener('click', (e) => { if (e.target === leadModal) closeLead(); });
   leadModal.querySelector('[data-close-lead]').addEventListener('click', closeLead);
 
-  // Закрытие лайтбокса (клик по фону или кнопке).
+  // Лайтбокс: навигация (стрелки/свайп/клавиши) и закрытие (фон или кнопка).
+  lbImg = lightbox.querySelector('img');
+  lbCount = lightbox.querySelector('.rl-lb-count');
+
   lightbox.addEventListener('click', (e) => {
+    if (e.target.closest('[data-lb-prev]')) { lbStep(-1); return; }
+    if (e.target.closest('[data-lb-next]')) { lbStep(1); return; }
     if (e.target === lightbox || e.target.closest('[data-close-lb]')) closeLightbox();
+  });
+
+  let touchX = null;
+  lightbox.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].clientX; }, { passive: true });
+  lightbox.addEventListener('touchend', (e) => {
+    if (touchX == null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    touchX = null;
+    if (Math.abs(dx) > 40) lbStep(dx < 0 ? 1 : -1);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (!isShown(lightbox)) return;
+    if (e.key === 'ArrowLeft') { e.preventDefault(); lbStep(-1); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); lbStep(1); }
   });
 }

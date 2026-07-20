@@ -50,6 +50,19 @@ export function initNavigation() {
       setMenu(false); // закрыть мобильное меню, если открыто
       scrollToTarget(a.getAttribute('href'));
     }));
+
+  // Заход по ссылке вида «/#advantages» (например, со страницы подяки): доскролл
+  // к нужной секции с учётом высоты залипающей шапки, после полной загрузки макета.
+  const initialHash = window.location.hash;
+  if (initialHash && initialHash.length > 1) {
+    let target = null;
+    try { target = document.querySelector(initialHash); } catch { target = null; }
+    if (target || initialHash === '#top') {
+      const go = () => scrollToTarget(initialHash);
+      if (document.readyState === 'complete') setTimeout(go, 80);
+      else window.addEventListener('load', () => setTimeout(go, 80), { once: true });
+    }
+  }
 }
 
 export function isMenuOpen() {
