@@ -40,4 +40,6 @@
   .foot-bar{flex-direction:column;align-items:flex-start;gap:22px;}
   .fcard .pill{width:100%;text-align:center;}
   .fcard-body{margin-top:8px;}
+  /* «Створено з душею» — по левому краю, как и остальной футер на мобиле. */
+  .foot-credit{margin-left:0;justify-content:flex-start;}
 }
