@@ -83,7 +83,7 @@ function fab() {
   const update = () => {
     ticking = false;
     const sec = document.getElementById('remont');
-    if (!sec) { if (cur) { cur = false; fabEl.classList.remove('on'); } return; }
+    if (!sec) { if (cur) { cur = false; fabEl.classList.remove('on'); document.body.classList.remove('msgr-lift'); } return; }
     const vh = window.innerHeight;
     const r = sec.getBoundingClientRect();
     let show = r.top < vh * 0.75 && r.bottom > vh * 0.3;
@@ -97,7 +97,13 @@ function fab() {
       };
       if (clash(sec.querySelector('.rl-more a')) || clash(sec.querySelector('.rl-foot .pill'))) show = false;
     }
-    if (show !== cur) { cur = show; fabEl.classList.toggle('on', show); }
+    if (show !== cur) {
+      cur = show;
+      fabEl.classList.toggle('on', show);
+      // Виджет мессенджеров поднимается над FAB с отступом 32px, пока кнопка видна.
+      if (show) document.body.style.setProperty('--msgr-lift', (fabEl.offsetHeight + 32) + 'px');
+      document.body.classList.toggle('msgr-lift', show);
+    }
   };
   const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
   window.addEventListener('scroll', onScroll, { passive: true });

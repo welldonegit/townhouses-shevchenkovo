@@ -1,0 +1,12 @@
+import { JSDOM, VirtualConsole } from 'jsdom'; import { readFileSync } from 'fs';
+const vc=new VirtualConsole(); vc.on('jsdomError',()=>{});
+const dom=new JSDOM(readFileSync('./index.html','utf8'),{url:'https://taun.com.ua/',pretendToBeVisual:true,virtualConsole:vc});
+const {window}=dom; globalThis.window=window; globalThis.document=window.document;
+globalThis.getComputedStyle=window.getComputedStyle.bind(window); globalThis.requestAnimationFrame=(c)=>setTimeout(c,0);
+globalThis.CustomEvent=window.CustomEvent; globalThis.localStorage=window.localStorage;
+globalThis.IntersectionObserver=class{observe(){}disconnect(){}}; globalThis.MutationObserver=window.MutationObserver;
+globalThis.matchMedia=()=>({matches:false,addEventListener(){},addListener(){}});
+await import('./src/js/main.js?t='+Date.now()); await new Promise(r=>setTimeout(r,50));
+const v=document.querySelector('.mi-viber');
+console.log('viber innerHTML тег:', v.firstElementChild.tagName, '| src:', v.querySelector('img')?.getAttribute('src'));
+console.log('phone/wa всё ещё svg:', document.querySelector('.mi-phone svg')?.tagName, document.querySelector('.mi-wa svg')?.tagName);

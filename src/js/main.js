@@ -8,6 +8,7 @@ import { initTabs } from './tabs.js';
 import { initPhoneInputs } from './phone-input.js';
 import { initForms } from './form.js';
 import { initEffects } from './effects.js';
+import { initContactWidget } from './contact-widget.js';
 
 function init() {
   captureUtm();
@@ -19,6 +20,7 @@ function init() {
   initPhoneInputs(); // маска + UI-валидация телефонов до навешивания submit
   initForms();
   initEffects();
+  initContactWidget();
 
   // Единый обработчик Escape (стек как в исходнике: зум → лід → будинок → меню).
   document.addEventListener('keydown', (e) => {

@@ -122,6 +122,17 @@ const RE_S60 = [
 ].map((src) => ({ label: 'Рендер інтер’єру', src }));
 export const REMONT = { compact: RE_C48, spacious: RE_S60 };
 
+// Контакти для віджета месенджерів. Порожнє значення = іконка не виводиться.
+// Слоти під Telegram / Messenger / Instagram лишені порожніми — заповнити за наявності.
+export const CONTACTS = {
+  phone: '380685005011',                                     // tel: (тільки цифри)
+  telegram: '',                                              // напр. 'https://t.me/username'
+  viber: 'viber://chat?number=%2B380685005011',
+  whatsapp: 'https://api.whatsapp.com/send?phone=380685005011',
+  messenger: '',                                             // напр. 'https://m.me/username'
+  instagram: '',                                             // напр. 'https://instagram.com/username'
+};
+
 // Конфигурация лид-модалки по сценариям.
 export const LEAD = {
   price: { img: 'assets/townhouse-hero.jpg', h: 'Отримати актуальні ціни', sub: 'Залиште контакти — менеджер зв’яжеться найближчим часом і надішле актуальні ціни та планування.', cta: 'Отримати пропозицію' },
