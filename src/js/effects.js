@@ -86,17 +86,10 @@ function fab() {
     if (!sec) { if (cur) { cur = false; fabEl.classList.remove('on'); document.body.classList.remove('msgr-lift'); } return; }
     const vh = window.innerHeight;
     const r = sec.getBoundingClientRect();
-    let show = r.top < vh * 0.75 && r.bottom > vh * 0.3;
-    if (show) {
-      const band = vh - 112;
-      const clash = (el) => {
-        if (!el) return false;
-        const b = el.getBoundingClientRect();
-        if (!b.width && !b.height) return false;
-        return b.bottom > band && b.top < vh - 6;
-      };
-      if (clash(sec.querySelector('.rl-more a')) || clash(sec.querySelector('.rl-foot .pill'))) show = false;
-    }
+    // FAB видна, пока блок ремонта в поле зрения. Прежнее «анти-наложение»
+    // (пряталась при попадании кнопки «Більше зображень» в нижнюю зону) убрано —
+    // оно давало дёрганое пропадание/появление при скролле.
+    const show = r.top < vh * 0.75 && r.bottom > vh * 0.3;
     if (show !== cur) {
       cur = show;
       fabEl.classList.toggle('on', show);
