@@ -14,6 +14,15 @@ export const FORM_LABELS = {
   unknown: 'Заявка з сайту',
 };
 
+// Подпись формы для уведомлений. Для заявки с карточки дома дополняется
+// конкретным домом («Заявка з картки будинку ТАУНХАУС 63,20м²»).
+// Используется и Telegram, и Pipedrive — чтобы формулировка была одна.
+export function formLabel(data) {
+  const base = FORM_LABELS[data.formType] || data.formType;
+  const house = data.fields && data.fields.house;
+  return house ? `${base} ${house}` : base;
+}
+
 // Возвращает { ok:true } только при реально успешном ответе Telegram.
 // При любой проблеме — { ok:false, error } с техническим кодом (без ПДн).
 export async function sendToTelegram(data) {
@@ -55,12 +64,13 @@ export function buildMessage(data) {
   const u = data.utm || {};
   const lines = ['🔔 Нова заявка з лендінгу таунхауси', ''];
 
-  lines.push(`Форма: ${FORM_LABELS[data.formType] || data.formType}`);
+  lines.push(`Форма: ${formLabel(data)}`);
   if (f.name) lines.push(`Ім’я: ${f.name}`);
   lines.push(`Телефон: ${data.phone}`);
   if (f.email) lines.push(`Email: ${f.email}`);
 
-  const known = new Set(['name', 'email', 'comment']);
+  // house уже вошёл в строку «Форма», поэтому в «Додаткові дані» не дублируется.
+  const known = new Set(['name', 'email', 'comment', 'house']);
   const extra = Object.entries(f).filter(([k]) => !known.has(k));
   if (f.comment || extra.length) {
     lines.push('', 'Додаткові дані:');

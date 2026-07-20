@@ -4,7 +4,7 @@
 // без URL (в query token), без токена и без ПДн клиента.
 import { config } from '../config/env.js';
 import { fetchWithTimeout } from '../lib/http.js';
-import { FORM_LABELS } from './telegram-service.js';
+import { formLabel } from './telegram-service.js';
 
 const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
 
@@ -107,10 +107,9 @@ async function createPerson(data, email) {
 async function createLead(data, personId, submissionId) {
   const cfg = config.pipedrive;
   const name = (data.fields && data.fields.name) || data.phone;
-  const formLabel = FORM_LABELS[data.formType] || data.formType;
 
   const body = {
-    title: `Заявка з лендингу — ${formLabel} — ${name}`,
+    title: `Заявка з лендингу — ${formLabel(data)} — ${name}`,
     person_id: personId,
     origin_id: submissionId,
   };
@@ -132,8 +131,9 @@ const escapeHtml = (s) => String(s == null ? '' : s)
 async function createNote(leadId, data, submissionId) {
   const f = data.fields || {};
   const u = data.utm || {};
-  const skip = new Set(['name', 'phone', 'email']);
-  const lines = [`<b>Форма:</b> ${escapeHtml(FORM_LABELS[data.formType] || data.formType)}`];
+  // house уже вошёл в строку «Форма» — отдельной строкой не дублируем.
+  const skip = new Set(['name', 'phone', 'email', 'house']);
+  const lines = [`<b>Форма:</b> ${escapeHtml(formLabel(data))}`];
   for (const [k, v] of Object.entries(f)) {
     if (!skip.has(k)) lines.push(`<b>${escapeHtml(k)}:</b> ${escapeHtml(v)}`);
   }

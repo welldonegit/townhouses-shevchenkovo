@@ -52,6 +52,9 @@ function renderHouse() {
   mArea.replaceChildren(document.createTextNode('ТАУНХАУС ' + h.area), unit('м²'));
   mVal.textContent = h.sections;
 
+  // Какой именно дом смотрит пользователь — уходит в заявку (form.js читает dataset).
+  if (houseForm) houseForm.dataset.house = 'ТАУНХАУС ' + h.area + 'м²';
+
   featsList.replaceChildren(...h.features.map((f) => {
     const li = document.createElement('li');
     li.textContent = f;

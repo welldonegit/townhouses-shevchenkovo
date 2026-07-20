@@ -35,6 +35,8 @@ async function onSubmit(e, form) {
 
   const fields = {};
   new FormData(form).forEach((v, k) => { if (typeof v === 'string') fields[k] = v; });
+  // Модалка будинку проставляет data-house — конкретный дом, з картки якого залишено заявку.
+  if (form.dataset.house) fields.house = form.dataset.house;
   const payload = {
     formType: form.dataset.leadType || 'unknown',
     page: window.location.pathname,
