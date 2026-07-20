@@ -50,7 +50,7 @@ leadsRouter.post('/', rateLimit, async (req, res, next) => {
     const [tg, pd, gs] = await Promise.allSettled([
       sendToTelegram(data),
       sendToPipedrive(data, submissionId),
-      sendToGoogleSheets(data, submissionId),
+      sendToGoogleSheets(data),
     ]);
     const tgVal = tg.status === 'fulfilled' && tg.value ? tg.value : { ok: false, error: 'crashed' };
     const pdVal = pd.status === 'fulfilled' && pd.value ? pd.value : { ok: false, error: 'crashed' };

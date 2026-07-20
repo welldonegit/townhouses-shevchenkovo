@@ -15,7 +15,7 @@ const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'ut
 
 // Успех только если: запрос завершился, тело разобралось как JSON и в нём ok:true.
 // HTTP 200 с { ok:false } — это ошибка.
-export async function sendToGoogleSheets(data, submissionId) {
+export async function sendToGoogleSheets(data) {
   const { url, secret, timeoutMs } = config.googleSheets;
   if (!url || !secret) return { ok: false, reason: 'not_configured' };
 
@@ -26,7 +26,7 @@ export async function sendToGoogleSheets(data, submissionId) {
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(buildPayload(data, submissionId, secret)),
+        body: JSON.stringify(buildPayload(data, secret)),
       },
       timeoutMs,
     );
@@ -59,16 +59,12 @@ export async function sendToGoogleSheets(data, submissionId) {
 }
 
 // Только поля уже провалидированного payload — ничего не выдумываем.
-// additional — всё, что пришло из формы сверх name/email (phone валидация
-// выносит отдельно): comment, house и т.п.
-export function buildPayload(data, submissionId, secret) {
+// Порядок ключей совпадает с порядком колонок в таблице.
+// Про дом: он не теряется без additional — formLabel дописывает его к названию
+// формы («Заявка з картки будинку ТАУНХАУС 57,60м²»).
+export function buildPayload(data, secret) {
   const f = data.fields || {};
   const u = data.utm || {};
-
-  const additional = {};
-  for (const [k, v] of Object.entries(f)) {
-    if (k !== 'name' && k !== 'email') additional[k] = v;
-  }
 
   const utm = {};
   for (const key of UTM_KEYS) utm[key] = u[key] || '';
@@ -76,12 +72,11 @@ export function buildPayload(data, submissionId, secret) {
   return {
     secret,
     createdAt: new Date().toISOString(),
-    submissionId,
     formName: formLabel(data), // та же подпись, что в Telegram и Pipedrive
     name: f.name || '',
     phone: data.phone,
     email: f.email || '',
-    additional,
+    comment: f.comment || '',
     pageUrl: data.page || '',
     utm,
   };
