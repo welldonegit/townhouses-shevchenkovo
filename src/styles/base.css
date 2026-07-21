@@ -5,12 +5,16 @@ body{background:var(--c-bg);font-family:'Onest',-apple-system,BlinkMacSystemFont
 a{color:var(--c-green);text-decoration:none;}
 a:hover{color:var(--c-accent);}
 img{display:block;}
+/* Иначе <button> берёт UA-дефолт 13.3333px — дробный кегль в инспекторе. */
+button{font-family:inherit;font-size:16px;}
 ::selection{background:var(--c-accent);color:#F6F1E7;}
 
 .preload{position:fixed;inset:0;z-index:200;background:var(--c-bg-alt);display:flex;align-items:center;justify-content:center;transition:opacity .55s ease;}
 .preload.hide{opacity:0;pointer-events:none;}
 .preload-wm{text-align:center;animation:preblink 1.6s ease-in-out infinite;}
-.preload-wm span{display:block;font:700 clamp(20px,3.4vw,34px)/1.12 'Onest',sans-serif;letter-spacing:.14em;}
+.preload-wm span{display:block;font:700 34px/38px 'Onest',sans-serif;letter-spacing:.14em;}
 .preload-wm .l1{color:var(--c-ink);}
-.preload-wm .l2{color:var(--c-green);margin-top:6px;}
+.preload-wm .l2{color:var(--c-green);margin-top:8px;}
+@media (max-width:1024px){.preload-wm span{font-size:26px;line-height:30px;}}
+@media (max-width:560px){.preload-wm span{font-size:20px;line-height:24px;}}
 @keyframes preblink{0%,100%{opacity:.32}50%{opacity:1}}

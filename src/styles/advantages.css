@@ -1,11 +1,12 @@
 /* advantages */
 .adv{padding-top:var(--section-pt);padding-bottom:0;}
-.adv-head{max-width:780px;margin-bottom:clamp(30px,4vw,52px);}
-.adv-eb{font:600 12px/1 'Onest',sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--c-eyebrow);margin-bottom:16px;}
-.adv-title{margin:0;font-weight:700;letter-spacing:-.025em;font-size:clamp(28px,3.9vw,54px);line-height:1.03;color:var(--c-ink);max-width:15ch;}
-.adv-sub{margin:clamp(14px,1.6vw,20px) 0 0;font:400 clamp(16px,1.25vw,18px)/1.5 'Onest',sans-serif;color:var(--c-text);max-width:50ch;}
-.stack{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(14px,1.4vw,22px);}
-.adv-card{display:flex;flex-direction:column;gap:clamp(16px,1.6vw,26px);min-height:clamp(210px,18vw,280px);padding:clamp(22px,1.9vw,32px);border-radius:20px;background:var(--c-beige);border:1px solid var(--c-beige-line);overflow:hidden;}
+.adv-head{max-width:780px;margin-bottom:48px;}
+.adv-eb{font:600 12px/12px 'Onest',sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--c-eyebrow);margin-bottom:16px;}
+.adv-title{margin:0;font-weight:700;letter-spacing:-.025em;font-size:54px;line-height:56px;color:var(--c-ink);max-width:514px;}
+.adv-sub{margin:20px 0 0;font:400 18px/26px 'Onest',sans-serif;color:var(--c-text);max-width:572px;}
+/* 1440: (1296-48)/4 = 312 на карточку; .big = 312*2+16 = 640. */
+.stack{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.adv-card{display:flex;flex-direction:column;gap:24px;min-height:256px;padding:24px;border-radius:20px;background:var(--c-beige);border:1px solid var(--c-beige-line);overflow:hidden;}
 .adv-card.big{grid-column:span 2;}
 .adv-card.tint{background:#E3EAE0;border-color:#D6E0D3;}
 .adv-card.light{background:var(--c-beige);border-color:var(--c-beige-line);}
@@ -13,12 +14,12 @@
 .adv-card.accent{background:var(--c-green);border-color:var(--c-green);}
 .adv-ix{display:none;}
 .adv-card.accent .adv-ix{color:var(--c-green-tint-2);}
-.adv-name{margin:0;font-weight:700;letter-spacing:-.02em;font-size:clamp(19px,1.7vw,26px);line-height:1.1;color:var(--c-ink);max-width:18ch;}
-.adv-card.big .adv-name{font-size:clamp(22px,2.1vw,32px);}
+.adv-name{margin:0;font-weight:700;letter-spacing:-.02em;font-size:24px;line-height:26px;color:var(--c-ink);max-width:356px;}
+.adv-card.big .adv-name{font-size:30px;line-height:34px;}
 .adv-card.accent .adv-name{color:var(--c-cream-1);}
-.adv-desc{margin:10px 0 0;font:400 clamp(14px,1vw,15px)/1.5 'Onest',sans-serif;color:var(--c-text);max-width:34ch;}
+.adv-desc{margin:8px 0 0;font:400 14px/22px 'Onest',sans-serif;color:var(--c-text);max-width:316px;}
 .adv-card.accent .adv-desc{color:var(--c-green-tint);}
-.adv-ic{order:-1;width:clamp(60px,4.6vw,80px);height:clamp(60px,4.6vw,80px);flex:none;display:flex;align-items:center;justify-content:center;border-radius:16px;background:rgba(23,32,29,.05);color:var(--c-green);}
+.adv-ic{order:-1;width:64px;height:64px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:16px;background:rgba(23,32,29,.05);color:var(--c-green);}
 .adv-card.accent .adv-ic{background:rgba(243,239,228,.09);color:var(--c-cream-2);}
 .adv-ic svg{width:62%;height:62%;overflow:visible;}
 .adv-ic .a-flame{transform-box:fill-box;transform-origin:bottom center;animation:advFlick 2.6s ease-in-out infinite;}
@@ -37,11 +38,23 @@
 @keyframes advSway{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
 @media (prefers-reduced-motion:reduce){.adv-ic *{animation:none !important;}}
 @media (max-width:1024px){
+  .adv-desc{max-width:316px;}
+  .adv-name{max-width:262px;}
+  .adv-sub{max-width:508px;}
+  .adv-title{max-width:266px;}
+  .adv-head{margin-bottom:32px;}
+  .adv-title{font-size:28px;line-height:30px;}
+  .adv-sub{margin-top:16px;font-size:16px;line-height:24px;}
+  /* 768: (688-16)/2 = 336 на карточку. */
   .stack{grid-template-columns:repeat(2,1fr);}
   .adv-card.big{grid-column:span 2;}
+  .adv-card{gap:16px;min-height:208px;}
+  .adv-name{font-size:20px;line-height:22px;}
+  .adv-card.big .adv-name{font-size:22px;line-height:24px;}
+  .adv-ic{width:60px;height:60px;}
 }
 @media (max-width:560px){
   .stack{grid-template-columns:1fr;}
   .adv-card,.adv-card.big{grid-column:span 1;}
-  .adv-card{min-height:0;padding:22px;}
+  .adv-card{min-height:0;}
 }

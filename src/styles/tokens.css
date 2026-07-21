@@ -34,8 +34,29 @@
   --radius-xl: 24px;
   --radius-md: 14px;
 
-  /* --- spacing / layout --- */
+  /* --- spacing / layout ---
+     Ступенчатые целые значения вместо clamp()/vw: на контрольных ширинах
+     импорта в Figma (1440 / 768 / 390) внешние размеры должны быть целыми.
+     Контент контейнера: 1440-144=1296, 768-80=688, 390-40=350 — все чётные. */
   --container-max: 1440px;
-  --container-pad: clamp(20px,5vw,80px);
-  --section-pt: clamp(48px,7vw,100px);
+  --container-pad: 72px;
+  --section-pt: 96px;
+
+  /* --- components --- */
+  --button-h: 48px;       /* высота кнопки .pill */
+  --button-pad-x: 24px;   /* горизонтальный внутренний отступ кнопки */
+  --field-h: 56px;        /* высота поля ввода и CTA внутри модалок */
+}
+
+/* laptop: контейнер уже, контент между контрольными ширинами остаётся резиновым */
+@media (max-width:1280px){
+  :root{--container-pad:48px;--section-pt:80px;}
+}
+/* tablet — сюда попадает контрольная ширина 768px (контент 688px) */
+@media (max-width:1024px){
+  :root{--container-pad:40px;--section-pt:56px;}
+}
+/* mobile — сюда попадает контрольная ширина 390px (контент 350px) */
+@media (max-width:560px){
+  :root{--container-pad:20px;--section-pt:48px;}
 }

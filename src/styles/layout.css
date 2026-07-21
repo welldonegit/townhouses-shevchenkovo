@@ -1,12 +1,15 @@
 .wrap{max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad);}
 
-.eb{font:600 12px/1 'Onest',sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--c-eyebrow);}
+.eb{font:600 12px/12px 'Onest',sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--c-eyebrow);}
 /* Текст в две строки: обёрнут в span, иначе <br> внутри inline-flex не сработает.
    line-height задан явно — у .eb он равен 1, для двух строк этого мало. */
 .eb-loc{display:inline-flex;align-items:center;gap:8px;line-height:18px;}
 
-/* pills */
-.pill{display:inline-flex;align-items:center;justify-content:center;gap:9px;border-radius:var(--radius-pill);padding:15px 27px;font:600 15px/1 'Onest',sans-serif;letter-spacing:.005em;cursor:pointer;border:1px solid transparent;transition:background .2s,color .2s,border-color .2s,transform .2s;white-space:nowrap;}
+/* pills
+   Внешний размер кнопки задаётся системно, а не шириной текста:
+   высота — --button-h, ширина — --button-width (значение выставляется
+   по месту использования, см. модификаторы в hero/footer/location/remont). */
+.pill{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--radius-pill);height:var(--button-h);width:var(--button-width,auto);padding:0 var(--button-pad-x);font:600 15px/1 'Onest',sans-serif;letter-spacing:.005em;cursor:pointer;border:1px solid transparent;transition:background .2s,color .2s,border-color .2s,transform .2s;white-space:nowrap;flex:none;}
 .pill:active{transform:translateY(1px);}
 .pill:disabled,.pill[disabled]{opacity:.6;pointer-events:none;}
 .pill-dark{background:var(--c-green);color:var(--c-bg);}
@@ -15,12 +18,13 @@
 .pill-accent:hover{background:var(--c-accent-dk);color:var(--c-cream-3);}
 .pill-ghost{background:transparent;border-color:#C7C2B4;color:var(--c-ink);}
 .pill-ghost:hover{background:var(--c-ink);border-color:var(--c-ink);color:var(--c-bg);}
-.pill-badge{padding:7px 8px 7px 26px;gap:16px;justify-content:space-between;}
-.pill-ic{width:38px;height:38px;border-radius:var(--radius-pill);display:flex;align-items:center;justify-content:center;flex:none;}
+.pill-badge{padding:8px 8px 8px 24px;gap:16px;justify-content:space-between;}
+.pill-ic{width:40px;height:40px;border-radius:var(--radius-pill);display:flex;align-items:center;justify-content:center;flex:none;}
 .pill-accent .pill-ic{background:var(--c-cream-2);}
 .pill-ghost .pill-ic{background:var(--c-accent);}
 .pill{overflow:hidden;}
-.pill .roll{display:inline-block;overflow:hidden;vertical-align:bottom;line-height:1.16;}
+/* Окно «прокрутки» подписи: высота в px, иначе зависит от кегля и даёт дробь. */
+.pill .roll{display:inline-block;overflow:hidden;vertical-align:bottom;line-height:20px;}
 .pill .roll-in{display:block;position:relative;transition:transform .45s cubic-bezier(.55,0,.2,1);}
 .pill .roll-in::after{content:attr(data-text);position:absolute;left:0;top:100%;white-space:nowrap;}
 .pill:hover .roll-in{transform:translateY(-100%);}

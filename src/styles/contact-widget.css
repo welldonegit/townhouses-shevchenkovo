@@ -1,5 +1,5 @@
 /* Плавающий виджет связи (телефон + мессенджеры). Разметку строит contact-widget.js. */
-.msgr{position:fixed;right:clamp(16px,2.4vw,32px);bottom:clamp(16px,2.4vw,32px);z-index:100;display:flex;flex-direction:column;align-items:center;gap:12px;font-family:'Onest',sans-serif;transition:transform .35s ease;}
+.msgr{position:fixed;right:32px;bottom:32px;z-index:100;display:flex;flex-direction:column;align-items:center;gap:12px;font-family:'Onest',sans-serif;transition:transform .35s ease;}
 .msgr-list{display:flex;flex-direction:column;align-items:center;gap:12px;}
 /* Белая подложка под иконками: логотип Viber нарисован одним цветом с
    fill-rule:evenodd, трубка внутри — прозрачная дырка. Без подложки сквозь неё
@@ -38,4 +38,6 @@
 body.msgr-lift .msgr{transform:translateY(calc(-1 * var(--msgr-lift,82px)));}
 /* Скрываем виджет, когда открыт модал/меню (body с overflow:hidden). */
 .msgr.msgr-off{display:none;}
+@media (max-width:1024px){.msgr{right:20px;bottom:20px;}}
+@media (max-width:560px){.msgr{right:16px;bottom:16px;}}
 @media (prefers-reduced-motion:reduce){.msgr-toggle::before{animation:none;}.msgr-i{transition:opacity .2s ease;}}
