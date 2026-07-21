@@ -4,8 +4,14 @@
 .gp-title{margin:0;font-weight:700;letter-spacing:-.025em;font-size:52px;line-height:54px;color:var(--c-ink);}
 .gp-hint{display:inline-flex;flex:none;align-items:center;gap:8px;height:36px;font:500 14px/18px 'Onest',sans-serif;color:var(--c-text);background:#ECE6D9;border:1px solid #DED8CA;border-radius:var(--radius-pill);padding:0 16px;width:432px;justify-content:center;}
 .gp-hint svg{flex:none;}
-/* Высота сцены задана явно: 1296x972 / 688x516 / 350x520 — целые на всех ступенях. */
-.gp-stage{position:relative;width:100%;height:972px;border-radius:var(--radius-lg);overflow:hidden;background:var(--c-surface);}
+/* Хотспоты (.gp-spot) позиционируются в % от сцены, поэтому пропорции сцены
+   обязаны совпадать с пропорциями картинки на ЛЮБОЙ ширине. Фиксированная
+   высота ломает привязку везде, кроме контрольной ширины, — только aspect-ratio.
+   Даёт целое на контроле: 1296x972 (desk) и 688x516 (desk); 350x520.68 (mob) —
+   дробь допустима, это масштабирование изображения. */
+.gp-stage{position:relative;width:100%;border-radius:var(--radius-lg);overflow:hidden;background:var(--c-surface);}
+.gp-desk{aspect-ratio:1030/772;}   /* genplan-new-desktop.jpg */
+.gp-mob{aspect-ratio:533/772;}     /* genplan-new-mobile.jpg */
 .gp-img{width:100%;height:100%;object-fit:cover;display:block;}
 .gp-mob{display:none;}
 .gp-spot{position:absolute;margin:0;padding:6px;border:1.5px solid rgba(243,239,228,.4);background:rgba(41,66,57,0);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .22s,border-color .22s,box-shadow .22s;}
@@ -16,7 +22,6 @@
 @media (max-width:1024px){
   .gp-head{margin-bottom:20px;}
   .gp-title{font-size:28px;line-height:30px;}
-  .gp-stage{height:516px;}
 }
 @media (max-width:768px){
   .gp-more{display:none;}
@@ -27,7 +32,6 @@
   .gp-hint{width:100%;}
   .gp-desk{display:none;}
   .gp-mob{display:block;}
-  .gp-stage{height:520px;}
 }
 @media (max-width:480px){
   .gp-badge{width:18px;height:18px;font-size:10px;line-height:18px;}
