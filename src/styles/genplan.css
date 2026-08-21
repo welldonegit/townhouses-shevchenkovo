@@ -12,8 +12,13 @@
 .gp-stage{position:relative;width:100%;border-radius:var(--radius-lg);overflow:hidden;background:var(--c-surface);}
 .gp-desk{aspect-ratio:1030/772;}   /* genplan-new-desktop.jpg */
 .gp-mob{aspect-ratio:533/772;}     /* genplan-new-mobile.jpg */
+.gp-dup-desk{aspect-ratio:927/695;}  /* genplan-duplex-desktop.jpg (1854x1390) */
+.gp-dup-mob{aspect-ratio:707/1024;}  /* genplan-duplex-mobile.jpg  (1414x2048) */
+/* Таби генплану: элемент .rl-tab переиспользован из блока ремонта. */
+.gp-pane{display:none;}
+.gp-pane.on{display:block;}
 .gp-img{width:100%;height:100%;object-fit:cover;display:block;}
-.gp-mob{display:none;}
+.gp-mob,.gp-dup-mob{display:none;}
 .gp-spot{position:absolute;margin:0;padding:6px;border:1.5px solid rgba(243,239,228,.4);background:rgba(41,66,57,0);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .22s,border-color .22s,box-shadow .22s;}
 .gp-spot:hover{background:rgba(41,66,57,.4);border-color:var(--c-accent);box-shadow:0 0 0 2px rgba(188,104,72,.4);}
 .gp-badge{width:26px;height:26px;flex:none;border-radius:var(--radius-pill);background:var(--c-cream-2);color:var(--c-ink);font:600 12px/26px 'Onest',sans-serif;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.3);}
@@ -30,8 +35,8 @@
 }
 @media (max-width:560px){
   .gp-hint{width:100%;}
-  .gp-desk{display:none;}
-  .gp-mob{display:block;}
+  .gp-desk,.gp-dup-desk{display:none;}
+  .gp-mob,.gp-dup-mob{display:block;}
 }
 @media (max-width:480px){
   .gp-badge{width:18px;height:18px;font-size:10px;line-height:18px;}

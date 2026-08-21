@@ -1,26 +1,42 @@
 // Слайдер будинків: рендер карток, drag-to-scroll, prev/next, прогрес, лічильник.
-import { HOUSES, SECTION_MAP, PLANS } from './data.js';
+// Таби перемикають колекції (таунхауси / дуплекси); розмітка табів спільна з блоком ремонту.
+import { HOUSES, SECTION_MAP, PLANS, DUPLEXES, DUPLEX_PLANS } from './data.js';
 import { openHouse } from './modal.js';
+
+// Кожна колекція дає свій набір карток і свій підзаголовок над слайдером.
+const COLLECTIONS = {
+  towns: {
+    desc: 'Усі будинки рівноцінні — від 47,88 до 63,20 м². Оберіть секцію та відкрийте планування.',
+    // Секція генплану → тип будинку (кілька секцій можуть мати однакове планування).
+    units: () => SECTION_MAP.map((hi, k) => ({
+      no: '№ ' + String(k + 1).padStart(2, '0'),
+      area: HOUSES[hi].area, spec: HOUSES[hi].spec, plan: PLANS[hi][0],
+      open: () => openHouse(hi),
+    })),
+  },
+  duplex: {
+    desc: 'Вісім секцій по 75,60 м² — з двома або трьома спальнями. Оберіть секцію та відкрийте планування.',
+    units: () => DUPLEXES.map((d, k) => ({
+      no: d.sections,
+      area: d.area, spec: d.spec, plan: DUPLEX_PLANS[k][0],
+      open: () => openHouse(k, 'duplex'),
+    })),
+  },
+};
 
 export function initSlider() {
   const track = document.querySelector('.track');
   if (!track) return;
   const countEl = document.querySelector('.s-count b');
+  const totalEl = document.querySelector('[data-s-total]');
+  const descEl = document.querySelector('[data-h-desc]');
   const thumb = document.querySelector('.s-thumb');
   const prevBtn = document.querySelector('.s-btn[data-prev]');
   const nextBtn = document.querySelector('.s-btn[data-next]');
-
-  const units = SECTION_MAP.map((hi, k) => ({
-    no: '№ ' + String(k + 1).padStart(2, '0'),
-    area: HOUSES[hi].area, spec: HOUSES[hi].spec, plan: PLANS[hi][0], hi,
-  }));
+  const tabs = document.querySelectorAll('[data-h-tab]');
 
   const drag = { active: false, x: 0, left: 0, moved: false };
-  units.forEach((u) => {
-    const card = buildCard(u);
-    card.addEventListener('click', () => { if (!drag.moved) openHouse(u.hi); });
-    track.appendChild(card);
-  });
+  let units = [];
 
   const stepSize = () => {
     const first = track.querySelector('.hcard');
@@ -31,7 +47,7 @@ export function initSlider() {
     const max = track.scrollWidth - track.clientWidth;
     const ratio = Math.min(track.clientWidth / track.scrollWidth, 1);
     const p = max > 2 ? track.scrollLeft / max : 0;
-    const idx = Math.min(Math.max(Math.round(track.scrollLeft / stepSize()) + 1, 1), SECTION_MAP.length);
+    const idx = Math.min(Math.max(Math.round(track.scrollLeft / stepSize()) + 1, 1), units.length);
     if (countEl) countEl.textContent = String(idx).padStart(2, '0');
     if (thumb) {
       thumb.style.width = (ratio * 100).toFixed(1) + '%';
@@ -41,8 +57,31 @@ export function initSlider() {
     if (nextBtn) nextBtn.disabled = track.scrollLeft >= max - 2;
   };
 
+  // Перемальовує картки під обрану колекцію та повертає слайдер на початок.
+  const render = (key) => {
+    const c = COLLECTIONS[key] || COLLECTIONS.towns;
+    units = c.units();
+    track.replaceChildren(...units.map((u) => {
+      const card = buildCard(u);
+      card.addEventListener('click', () => { if (!drag.moved) u.open(); });
+      return card;
+    }));
+    if (descEl) descEl.textContent = c.desc;
+    if (totalEl) totalEl.textContent = String(units.length).padStart(2, '0');
+    // scroll-behavior:smooth анімував би перемотку на початок при зміні таба.
+    const behavior = track.style.scrollBehavior;
+    track.style.scrollBehavior = 'auto';
+    track.scrollLeft = 0;
+    track.style.scrollBehavior = behavior;
+    update();
+  };
+
   track.addEventListener('scroll', update, { passive: true });
   window.addEventListener('resize', update);
+  tabs.forEach((tab) => tab.addEventListener('click', () => {
+    tabs.forEach((t) => t.classList.toggle('on', t === tab));
+    render(tab.getAttribute('data-h-tab'));
+  }));
   prevBtn && prevBtn.addEventListener('click', () => track.scrollBy({ left: -stepSize(), behavior: 'smooth' }));
   nextBtn && nextBtn.addEventListener('click', () => track.scrollBy({ left: stepSize(), behavior: 'smooth' }));
 
@@ -65,8 +104,8 @@ export function initSlider() {
   track.addEventListener('pointerup', up);
   track.addEventListener('pointerleave', up);
 
+  render('towns');
   setTimeout(update, 80);
-  update();
 }
 
 function buildCard(u) {

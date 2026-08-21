@@ -1,5 +1,19 @@
 import { defineConfig } from 'vite';
 
+// В dev отдаём test.html по «чистому» адресу /test — так же, как это делает Express в проде.
+// Без завершающего слэша, чтобы относительные пути к assets/... резолвились от корня.
+const testPageDevRoute = {
+  name: 'test-page-dev-route',
+  configureServer(server) {
+    server.middlewares.use((req, res, next) => {
+      const [pathname] = req.url.split('?');
+      if (pathname === '/test') { req.url = '/test.html'; }
+      else if (pathname === '/test/') { res.writeHead(301, { Location: '/test' }); return res.end(); }
+      next();
+    });
+  },
+};
+
 // Многостраничный сайт (лендинг + страница «дякуємо»).
 // Изображения лежат в public/assets и отдаются «как есть» по путям assets/... —
 // часть ссылок формируется в JS (data.js) и не видна статическому анализу Vite,
@@ -7,6 +21,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   appType: 'mpa',
   publicDir: 'public',
+  plugins: [testPageDevRoute],
   // В dev проксируем /api на локальный Express (npm run server).
   server: {
     proxy: { '/api': 'http://localhost:3000' },
@@ -21,6 +36,7 @@ export default defineConfig({
       input: {
         main: 'index.html',
         thanks: 'thanks/index.html',
+        test: 'test.html', // тестовая копия главной, отдаётся по /test
       },
     },
   },

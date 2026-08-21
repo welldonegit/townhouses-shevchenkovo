@@ -1,13 +1,21 @@
 // Оверлеи: модалка будинку (варіанти + зум плану), лід-модалка, лайтбокс ремонту.
 // Общий scroll-lock и стек Escape. Слушатели навешиваются один раз в initModal().
-import { HOUSES, PLANS, LEAD } from './data.js';
+import { HOUSES, PLANS, DUPLEXES, DUPLEX_PLANS, LEAD } from './data.js';
+
+// Модалка обслуживает две коллекции с одинаковой формой записей (см. data.js).
+// Отличаются только подписи: тип дома и заголовок над номером секции.
+const COLLECTIONS = {
+  houses: { list: HOUSES, plans: PLANS, label: 'ТАУНХАУС', alt: 'Планування таунхауса', secLabel: 'Це планування доступне у будинках' },
+  duplex: { list: DUPLEXES, plans: DUPLEX_PLANS, label: 'ДУПЛЕКС', alt: 'Планування дуплекса', secLabel: 'Секція на генплані' },
+};
 
 let houseModal, leadModal, lightbox;
-let planImg, planwrap, varswitch, mArea, mVal, featsList, roomsBox;
+let planImg, planwrap, varswitch, mArea, mVal, mLabel, featsList, roomsBox;
 let leadImg, leadH, leadSub, leadCta, leadForm, houseForm;
 
 // состояние модалки будинку
 let activeHouse = null;
+let activeCollection = 'houses';
 let rawVariant = 0;
 let zoomed = false;
 
@@ -28,7 +36,8 @@ function closeMenuDom() {
 }
 
 // ── Модалка будинку ─────────────────────────────────────────────────────
-export function openHouse(i) {
+export function openHouse(i, collection = 'houses') {
+  activeCollection = COLLECTIONS[collection] ? collection : 'houses';
   activeHouse = i;
   rawVariant = 0;
   zoomed = false;
@@ -39,21 +48,24 @@ export function openHouse(i) {
 }
 
 function renderHouse() {
-  const h = HOUSES[activeHouse];
-  const plans = PLANS[activeHouse];
+  const c = COLLECTIONS[activeCollection];
+  const h = c.list[activeHouse];
+  const plans = c.plans[activeHouse];
   const vCount = h.variants.length;
   const variant = Math.min(rawVariant, vCount - 1);
   const planIdx = Math.min(rawVariant, plans.length - 1);
   const av = h.variants[variant];
 
   planImg.src = plans[planIdx];
+  planImg.alt = c.alt;
   planwrap.classList.toggle('zoomed', zoomed);
 
-  mArea.replaceChildren(document.createTextNode('ТАУНХАУС ' + h.area), unit('м²'));
+  mArea.replaceChildren(document.createTextNode(c.label + ' ' + h.area), unit('м²'));
+  if (mLabel) mLabel.textContent = c.secLabel;
   mVal.textContent = h.sections;
 
   // Какой именно дом смотрит пользователь — уходит в заявку (form.js читает dataset).
-  if (houseForm) houseForm.dataset.house = 'ТАУНХАУС ' + h.area + 'м²';
+  if (houseForm) houseForm.dataset.house = c.label + ' ' + h.area + 'м²';
 
   featsList.replaceChildren(...h.features.map((f) => {
     const li = document.createElement('li');
@@ -176,6 +188,7 @@ export function initModal() {
   varswitch = houseModal.querySelector('.varswitch');
   mArea = houseModal.querySelector('.marea');
   mVal = houseModal.querySelector('.mval');
+  mLabel = houseModal.querySelector('.msec .mlabel');
   featsList = houseModal.querySelector('.feats-dynamic');
   roomsBox = houseModal.querySelector('.rooms');
   houseForm = houseModal.querySelector('.mform');

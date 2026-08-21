@@ -39,6 +39,11 @@ app.use('/api', (req, res) => res.status(404).json({ ok: false, error: 'not_foun
 app.use(express.static(distDir));
 app.use(express.static(publicDir));
 
+// Тестовая копия главной. Отдаём по /test (без слэша в конце): базой остаётся корень,
+// поэтому относительные пути к assets/... в разметке и в data.js работают без правок.
+app.get(/^\/test$/, (req, res) => res.sendFile(path.join(distDir, 'test.html')));
+app.get(/^\/test\/$/, (req, res) => res.redirect(301, '/test'));
+
 // Канонический URL страницы подяки: старые пути 301-редиректят на /thanks/.
 app.get(/^\/thanks$/, (req, res) => res.redirect(301, '/thanks/'));
 app.get('/thanks.html', (req, res) => res.redirect(301, '/thanks/'));
