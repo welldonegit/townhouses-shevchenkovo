@@ -5,7 +5,10 @@ import { openLightbox } from './modal.js';
 export function initTabs() {
   const grid = document.querySelector('.rl-set');
   if (!grid) return;
-  const tabs = document.querySelectorAll('.rl-tab');
+  // Обов'язково в межах секції: елемент .rl-tab перевикористаний у блоках
+  // генплану та планувань, тож глобальний селектор навісив би цей обробник
+  // і на їхні таби — вони скидали б активний стан і галерею одне одному.
+  const tabs = document.querySelectorAll('.remont .rl-tab');
   const moreWrap = document.querySelector('.rl-more');
   const moreBtn = document.querySelector('[data-show-all]');
 
