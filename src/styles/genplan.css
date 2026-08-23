@@ -34,7 +34,7 @@
   .gp-spot{padding:4px;border-radius:6px;}
 }
 @media (max-width:560px){
-  .gp-hint{width:100%;}
+  .gp-hint{width:100%;height:42px;}
   .gp-desk,.gp-dup-desk{display:none;}
   .gp-mob,.gp-dup-mob{display:block;}
 }
