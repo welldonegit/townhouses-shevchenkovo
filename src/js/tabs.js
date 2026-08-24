@@ -11,6 +11,11 @@ export function initTabs() {
   const tabs = document.querySelectorAll('.remont .rl-tab');
   const moreWrap = document.querySelector('.rl-more');
   const moreBtn = document.querySelector('[data-show-all]');
+  const cta = document.querySelector('.rl-cta');
+  // На десктопі плашка ремонту вбудована в сітку останньою коміркою (займає два
+  // вільні місця в ряду), тому згорнутий набір — 6 фото замість 8. На планшеті
+  // й мобільному вона лишається окремим блоком під галереєю.
+  const desk = window.matchMedia('(min-width:1025px)');
 
   let reType = 'compact';
   let showAll = false;
@@ -18,7 +23,7 @@ export function initTabs() {
 
   const render = () => {
     const set = REMONT[reType] || REMONT.compact;
-    const visible = showAll ? set : set.slice(0, 8);
+    const visible = showAll ? set : set.slice(0, desk.matches ? 6 : 8);
     grid.replaceChildren(...visible.map((t, i) => {
       const cell = document.createElement('div');
       cell.className = 'rl-cell';
@@ -30,8 +35,10 @@ export function initTabs() {
       return cell;
     }));
     grid.className = 'rl-set on anim-' + (anim % 2);
-    const hasMore = !showAll && set.length > 8;
+    const hasMore = !showAll && visible.length < set.length;
     if (moreWrap) moreWrap.style.display = hasMore ? '' : 'none';
+    // replaceChildren щоразу очищає сітку, тому плашку переставляємо після рендера.
+    if (cta) (desk.matches ? grid : grid.parentElement).appendChild(cta);
   };
 
   tabs.forEach((tab) => tab.addEventListener('click', () => {
@@ -43,6 +50,7 @@ export function initTabs() {
     render();
   }));
   moreBtn && moreBtn.addEventListener('click', (e) => { e.preventDefault(); showAll = true; render(); });
+  desk.addEventListener('change', render);
 
   render();
 }
