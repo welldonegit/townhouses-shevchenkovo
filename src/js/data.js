@@ -82,8 +82,20 @@ export const HOUSES = [
 export const SECTION_MAP = [1, 4, 4, 3, 1, 4, 4, 3, 0, 2, 0];
 
 // Продані секції таунхаусів: не клікабельні на генплані, позначені плашкою «Продано».
-export const SOLD_SECTIONS = [6, 7, 8];
+export const SOLD_SECTIONS = [6, 7, 8, 9];
 export const isSold = (section) => SOLD_SECTIONS.includes(section);
+
+// Ціни секцій таунхаусів у $, за таблицею від клієнта (індекс = № секції − 1).
+// Ціна прив'язана до секції, а не до типу планування.
+export const SECTION_PRICES = [
+  56000, 45500, 45500, 48600, 56000, 45500, 45500, 46200, 58800, 51900, 58800,
+];
+// «56 000 $» — той самий формат, що й у дуплексів.
+const usd = (n) => String(n).replace(/\B(?=(\d{3})+$)/g, ' ') + ' $';
+export const priceOf = (section) => {
+  const p = SECTION_PRICES[section - 1];
+  return p ? usd(p) : '';
+};
 
 export const PLANS = [
   ['assets/plan-6320-a.jpg'],

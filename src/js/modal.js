@@ -1,6 +1,6 @@
 // Оверлеи: модалка будинку (варіанти + зум плану), лід-модалка, лайтбокс ремонту.
 // Общий scroll-lock и стек Escape. Слушатели навешиваются один раз в initModal().
-import { HOUSES, PLANS, DUPLEXES, DUPLEX_PLANS, LEAD } from './data.js';
+import { HOUSES, PLANS, DUPLEXES, DUPLEX_PLANS, LEAD, priceOf } from './data.js';
 
 // Модалка обслуживает две коллекции с одинаковой формой записей (см. data.js).
 // Отличаются только подписи: тип дома и заголовок над номером секции.
@@ -17,6 +17,7 @@ let leadImg, leadH, leadSub, leadCta, leadForm, houseForm;
 let activeHouse = null;
 let activeCollection = 'houses';
 let activeSold = false;
+let activeSection = 0;
 let rawVariant = 0;
 let zoomed = false;
 
@@ -38,10 +39,12 @@ function closeMenuDom() {
 
 // ── Модалка будинку ─────────────────────────────────────────────────────
 // opts.sold — картка/секція, з якої відкрили модалку, продана (плашка «Продано»).
+// opts.section — номер секції таунхауса: від нього залежить ціна.
 export function openHouse(i, collection = 'houses', opts = {}) {
   activeCollection = COLLECTIONS[collection] ? collection : 'houses';
   activeHouse = i;
   activeSold = !!opts.sold;
+  activeSection = opts.section || 0;
   rawVariant = 0;
   zoomed = false;
   closeMenuDom();
@@ -67,10 +70,12 @@ function renderHouse() {
   if (mLabel) mLabel.textContent = c.secLabel;
   mVal.textContent = h.sections;
   if (mSold) mSold.style.display = activeSold ? '' : 'none';
-  // Ціна поки задана лише для дуплексів — для решти блок прихований.
+  // Ціна: у дуплексів спільна для всіх секцій, у таунхаусів — своя на кожну секцію.
+  // На проданих секціях ціну ховаємо.
+  const price = activeSold ? '' : (h.price || (activeSection ? priceOf(activeSection) : ''));
   if (mPrice) {
-    if (mPriceVal) mPriceVal.textContent = h.price || '';
-    mPrice.style.display = h.price ? '' : 'none';
+    if (mPriceVal) mPriceVal.textContent = price || '';
+    mPrice.style.display = price ? '' : 'none';
   }
 
   // Какой именно дом смотрит пользователь — уходит в заявку (form.js читает dataset).

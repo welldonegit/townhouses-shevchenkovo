@@ -5,7 +5,10 @@ import { openHouse } from './modal.js';
 
 export function initGenplan() {
   // Таунхауси: номер секції на генплані → індекс типу будинку.
-  const openTown = (k) => openHouse(SECTION_MAP[GP_NO[k] - 1]);
+  const openTown = (k) => {
+    const section = GP_NO[k];
+    openHouse(SECTION_MAP[section - 1], 'houses', { section, sold: isSold(section) });
+  };
   renderSpots(document.querySelector('.gp-desk'), GP_POS, GP_NO, openTown, isSold);
   renderSpots(document.querySelector('.gp-mob'), GP_POS_MOB, GP_NO, openTown, isSold);
 

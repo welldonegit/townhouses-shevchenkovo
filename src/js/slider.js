@@ -1,6 +1,6 @@
 // Слайдер будинків: рендер карток, drag-to-scroll, prev/next, прогрес, лічильник.
 // Таби перемикають колекції (усі будинки / таунхауси / дуплекси); розмітка табів спільна з блоком ремонту.
-import { HOUSES, SECTION_MAP, PLANS, DUPLEXES, DUPLEX_PLANS, isSold } from './data.js';
+import { HOUSES, SECTION_MAP, PLANS, DUPLEXES, DUPLEX_PLANS, isSold, priceOf } from './data.js';
 import { openHouse } from './modal.js';
 
 // Секція генплану → тип будинку (кілька секцій можуть мати однакове планування).
@@ -10,8 +10,10 @@ const townUnits = () => SECTION_MAP.map((hi, k) => {
   return {
     no: '№ ' + String(section).padStart(2, '0'),
     type: 'Таунхаус', sold,
-    area: HOUSES[hi].area, spec: HOUSES[hi].spec, plan: PLANS[hi][0],
-    open: () => openHouse(hi, 'houses', { sold }),
+    // Ціна — по номеру секції; на проданих її не показуємо.
+    area: HOUSES[hi].area, price: sold ? '' : priceOf(section),
+    spec: HOUSES[hi].spec, plan: PLANS[hi][0],
+    open: () => openHouse(hi, 'houses', { sold, section }),
   };
 });
 
