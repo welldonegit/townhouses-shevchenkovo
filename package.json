@@ -27,7 +27,8 @@
   "homepage": "https://github.com/welldonegit/townhouses-shevchenkovo#readme",
   "description": "",
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "motion": "^13.1.1"
   },
   "devDependencies": {
     "vite": "^8.1.5"

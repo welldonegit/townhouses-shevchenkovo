@@ -3,6 +3,7 @@ import { captureUtm } from './utm.js';
 import { initModal, handleEscape } from './modal.js';
 import { initNavigation, isMenuOpen, closeMenu } from './navigation.js';
 import { initSlider } from './slider.js';
+import { initHeroSlider } from './hero-slider.js';
 import { initGenplan } from './genplan.js';
 import { initTabs } from './tabs.js';
 import { initPhoneInputs } from './phone-input.js';
@@ -18,6 +19,7 @@ function init() {
   initModal();       // раньше навигации (updateScrollLock) и slider/genplan (openHouse)
   initNavigation();
   initSlider();
+  initHeroSlider();  // тільки на сторінках, де в героя є [data-hero-slider]
   initGenplan();
   initTabs();
   initPhoneInputs(); // маска + UI-валидация телефонов до навешивания submit
