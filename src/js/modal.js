@@ -10,12 +10,13 @@ const COLLECTIONS = {
 };
 
 let houseModal, leadModal, lightbox;
-let planImg, planwrap, varswitch, mArea, mVal, mLabel, featsList, roomsBox;
+let planImg, planwrap, varswitch, mArea, mVal, mLabel, mSold, mPrice, mPriceVal, featsList, roomsBox;
 let leadImg, leadH, leadSub, leadCta, leadForm, houseForm;
 
 // состояние модалки будинку
 let activeHouse = null;
 let activeCollection = 'houses';
+let activeSold = false;
 let rawVariant = 0;
 let zoomed = false;
 
@@ -36,9 +37,11 @@ function closeMenuDom() {
 }
 
 // ── Модалка будинку ─────────────────────────────────────────────────────
-export function openHouse(i, collection = 'houses') {
+// opts.sold — картка/секція, з якої відкрили модалку, продана (плашка «Продано»).
+export function openHouse(i, collection = 'houses', opts = {}) {
   activeCollection = COLLECTIONS[collection] ? collection : 'houses';
   activeHouse = i;
+  activeSold = !!opts.sold;
   rawVariant = 0;
   zoomed = false;
   closeMenuDom();
@@ -63,9 +66,19 @@ function renderHouse() {
   mArea.replaceChildren(document.createTextNode(c.label + ' ' + h.area), unit('м²'));
   if (mLabel) mLabel.textContent = c.secLabel;
   mVal.textContent = h.sections;
+  if (mSold) mSold.style.display = activeSold ? '' : 'none';
+  // Ціна поки задана лише для дуплексів — для решти блок прихований.
+  if (mPrice) {
+    if (mPriceVal) mPriceVal.textContent = h.price || '';
+    mPrice.style.display = h.price ? '' : 'none';
+  }
 
   // Какой именно дом смотрит пользователь — уходит в заявку (form.js читает dataset).
-  if (houseForm) houseForm.dataset.house = c.label + ' ' + h.area + 'м²';
+  // Для проданной секции форму запроса цены прячем (разметка остаётся в DOM).
+  if (houseForm) {
+    houseForm.dataset.house = c.label + ' ' + h.area + 'м²';
+    houseForm.style.display = activeSold ? 'none' : '';
+  }
 
   featsList.replaceChildren(...h.features.map((f) => {
     const li = document.createElement('li');
@@ -189,6 +202,9 @@ export function initModal() {
   mArea = houseModal.querySelector('.marea');
   mVal = houseModal.querySelector('.mval');
   mLabel = houseModal.querySelector('.msec .mlabel');
+  mSold = houseModal.querySelector('[data-m-sold]');
+  mPrice = houseModal.querySelector('[data-m-price]');
+  mPriceVal = houseModal.querySelector('[data-m-price-val]');
   featsList = houseModal.querySelector('.feats-dynamic');
   roomsBox = houseModal.querySelector('.rooms');
   houseForm = houseModal.querySelector('.mform');

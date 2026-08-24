@@ -2,7 +2,8 @@
 .genplan{padding-top:var(--section-pt);padding-bottom:0;}
 .gp-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;margin-bottom:32px;}
 .gp-title{margin:0;font-weight:700;letter-spacing:-.025em;font-size:52px;line-height:54px;color:var(--c-ink);}
-.gp-hint{display:inline-flex;flex:none;align-items:center;gap:8px;height:36px;font:500 14px/18px 'Onest',sans-serif;color:var(--c-text);background:#ECE6D9;border:1px solid #DED8CA;border-radius:var(--radius-pill);padding:0 16px;width:432px;justify-content:center;}
+/* Ширина — по тексту подсказки (он длинный и один на оба таба), но не шире колонки. */
+.gp-hint{display:inline-flex;flex:0 1 auto;align-items:center;gap:8px;min-height:36px;font:500 14px/18px 'Onest',sans-serif;color:var(--c-text);background:#ECE6D9;border:1px solid #DED8CA;border-radius:var(--radius-pill);padding:8px 16px;max-width:100%;justify-content:center;}
 .gp-hint svg{flex:none;}
 /* Хотспоты (.gp-spot) позиционируются в % от сцены, поэтому пропорции сцены
    обязаны совпадать с пропорциями картинки на ЛЮБОЙ ширине. Фиксированная
@@ -24,6 +25,10 @@
 .gp-badge{width:26px;height:26px;flex:none;border-radius:var(--radius-pill);background:var(--c-cream-2);color:var(--c-ink);font:600 12px/26px 'Onest',sans-serif;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.3);}
 .gp-more{font:600 12px/12px 'Onest',sans-serif;color:var(--c-cream-1);letter-spacing:.02em;text-shadow:0 1px 4px rgba(0,0,0,.5);opacity:.85;transition:opacity .22s;}
 .gp-spot:hover .gp-more{opacity:1;}
+/* Продана секція: клік вимкнено, плашка напівпрозора червона. */
+.gp-spot.sold{background:var(--c-sold-soft);border-color:var(--c-sold);cursor:default;}
+.gp-spot.sold:hover{background:var(--c-sold-soft);border-color:var(--c-sold);box-shadow:none;}
+.gp-spot.sold .gp-more{opacity:1;color:#FFF1EE;}
 @media (max-width:1024px){
   .gp-head{margin-bottom:20px;}
   .gp-title{font-size:28px;line-height:30px;}
@@ -34,7 +39,7 @@
   .gp-spot{padding:4px;border-radius:6px;}
 }
 @media (max-width:560px){
-  .gp-hint{width:100%;height:42px;}
+  .gp-hint{width:100%;}
   .gp-desk,.gp-dup-desk{display:none;}
   .gp-mob,.gp-dup-mob{display:block;}
 }

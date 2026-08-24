@@ -54,6 +54,12 @@
   .rl-lb{padding:40px;}
 }
 @media (max-width:560px){
+  /* Таби — всегда одной строкой: равные доли ширины контейнера, без переноса. */
+  .rl-tabs{flex-wrap:nowrap;gap:8px;}
+  .rl-tab{flex:1 1 0;width:auto;min-width:0;height:52px;padding:0 8px;align-items:center;text-align:center;gap:3px;}
+  .rl-tab b{font-size:12px;line-height:14px;}
+  .rl-tab span{font-size:10px;line-height:10px;}
+  .rl-tab b,.rl-tab span{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   /* 390: (350-10)/2 = 170 на ячейку. */
   .rl-set.on{grid-template-columns:repeat(2,1fr);gap:10px;}
   .rl-more .pill{--button-width:208px;}

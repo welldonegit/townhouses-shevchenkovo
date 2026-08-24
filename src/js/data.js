@@ -81,6 +81,10 @@ export const HOUSES = [
 
 export const SECTION_MAP = [1, 4, 4, 3, 1, 4, 4, 3, 0, 2, 0];
 
+// Продані секції таунхаусів: не клікабельні на генплані, позначені плашкою «Продано».
+export const SOLD_SECTIONS = [6, 7, 8];
+export const isSold = (section) => SOLD_SECTIONS.includes(section);
+
 export const PLANS = [
   ['assets/plan-6320-a.jpg'],
   ['assets/plan-5904-a.jpg', 'assets/plan-5904-b.jpg'],
@@ -163,6 +167,8 @@ const DUPLEX_UNITS = [
 // rooms порожній: блок «Площі приміщень» прихований, поки немає обмірів від забудовника.
 export const DUPLEXES = DUPLEX_UNITS.map(([type], k) => ({
   area: '75,60',
+  // Попередня ціна від забудовника, однакова для всіх секцій дуплексів.
+  price: '75 600 $',
   sections: '№ ' + String(k + 1).padStart(2, '0'),
   spec: DUPLEX_TYPES[type].spec,
   variants: [{ rooms: [] }],

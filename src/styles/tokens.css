@@ -27,6 +27,8 @@
   --c-line-2: #E4E0D5;
   --c-green-tint: #C2CDC5;
   --c-green-tint-2: #93A79B;
+  --c-sold: #B3352B;          /* плашки «Продано» */
+  --c-sold-soft: rgba(179,53,43,.42);  /* заливка проданого хотспота на генплані */
 
   /* --- radii --- */
   --radius-pill: 999px;

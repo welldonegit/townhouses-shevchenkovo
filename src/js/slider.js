@@ -1,26 +1,40 @@
 // Слайдер будинків: рендер карток, drag-to-scroll, prev/next, прогрес, лічильник.
-// Таби перемикають колекції (таунхауси / дуплекси); розмітка табів спільна з блоком ремонту.
-import { HOUSES, SECTION_MAP, PLANS, DUPLEXES, DUPLEX_PLANS } from './data.js';
+// Таби перемикають колекції (усі будинки / таунхауси / дуплекси); розмітка табів спільна з блоком ремонту.
+import { HOUSES, SECTION_MAP, PLANS, DUPLEXES, DUPLEX_PLANS, isSold } from './data.js';
 import { openHouse } from './modal.js';
+
+// Секція генплану → тип будинку (кілька секцій можуть мати однакове планування).
+const townUnits = () => SECTION_MAP.map((hi, k) => {
+  const section = k + 1;
+  const sold = isSold(section);
+  return {
+    no: '№ ' + String(section).padStart(2, '0'),
+    type: 'Таунхаус', sold,
+    area: HOUSES[hi].area, spec: HOUSES[hi].spec, plan: PLANS[hi][0],
+    open: () => openHouse(hi, 'houses', { sold }),
+  };
+});
+
+const duplexUnits = () => DUPLEXES.map((d, k) => ({
+  no: d.sections,
+  type: 'Дуплекс', sold: false,
+  area: d.area, price: d.price, spec: d.spec, plan: DUPLEX_PLANS[k][0],
+  open: () => openHouse(k, 'duplex'),
+}));
 
 // Кожна колекція дає свій набір карток і свій підзаголовок над слайдером.
 const COLLECTIONS = {
+  all: {
+    desc: 'Таунхауси від 47,88 до 63,20 м² та дуплекси по 75,60 м². Оберіть секцію та відкрийте планування.',
+    units: () => [...townUnits(), ...duplexUnits()],
+  },
   towns: {
     desc: 'Усі будинки рівноцінні — від 47,88 до 63,20 м². Оберіть секцію та відкрийте планування.',
-    // Секція генплану → тип будинку (кілька секцій можуть мати однакове планування).
-    units: () => SECTION_MAP.map((hi, k) => ({
-      no: '№ ' + String(k + 1).padStart(2, '0'),
-      area: HOUSES[hi].area, spec: HOUSES[hi].spec, plan: PLANS[hi][0],
-      open: () => openHouse(hi),
-    })),
+    units: townUnits,
   },
   duplex: {
     desc: 'Вісім секцій по 75,60 м² — з двома або трьома спальнями. Оберіть секцію та відкрийте планування.',
-    units: () => DUPLEXES.map((d, k) => ({
-      no: d.sections,
-      area: d.area, spec: d.spec, plan: DUPLEX_PLANS[k][0],
-      open: () => openHouse(k, 'duplex'),
-    })),
+    units: duplexUnits,
   },
 };
 
@@ -59,7 +73,7 @@ export function initSlider() {
 
   // Перемальовує картки під обрану колекцію та повертає слайдер на початок.
   const render = (key) => {
-    const c = COLLECTIONS[key] || COLLECTIONS.towns;
+    const c = COLLECTIONS[key] || COLLECTIONS.all;
     units = c.units();
     track.replaceChildren(...units.map((u) => {
       const card = buildCard(u);
@@ -104,7 +118,10 @@ export function initSlider() {
   track.addEventListener('pointerup', up);
   track.addEventListener('pointerleave', up);
 
-  render('towns');
+  // Стартова колекція — активний таб. На сторінках без табів (бойова головна,
+  // де дуплексів поки немає) це таунхауси.
+  const startTab = document.querySelector('[data-h-tab].on');
+  render(startTab ? startTab.getAttribute('data-h-tab') : 'towns');
   setTimeout(update, 80);
 }
 
@@ -114,9 +131,14 @@ function buildCard(u) {
   card.innerHTML =
     `<img src="${u.plan}" alt="Планування, секція ${u.no}" draggable="false">` +
     `<div class="hcard-eb">Секція ${u.no}</div>` +
+    '<div class="hcard-tags">' +
+      `<span class="hcard-tag">${u.type}</span>` +
+      (u.sold ? '<span class="hcard-tag sold">Продано</span>' : '') +
+    '</div>' +
     '<div class="hcard-b">' +
       '<div class="hcard-t">' +
         `<div class="a">${u.area}<small>м²</small></div>` +
+        (u.price ? `<div class="p">${u.price}</div>` : '') +
         `<div class="s">${u.spec}</div>` +
       '</div>' +
       '<span class="hcard-go"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3.4v9.2M3.4 8h9.2" stroke="#F8F4EC" stroke-width="1.6" stroke-linecap="round"></path></svg></span>' +
