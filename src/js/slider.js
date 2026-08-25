@@ -131,10 +131,14 @@ function buildCard(u) {
   card.className = 'hcard';
   card.innerHTML =
     `<img src="${u.plan}" alt="Планування, секція ${u.no}" draggable="false">` +
-    `<div class="hcard-eb">Секція ${u.no}</div>` +
-    '<div class="hcard-tags">' +
-      `<span class="hcard-tag">${u.type}</span>` +
-      (u.sold ? '<span class="hcard-tag sold">Продано</span>' : '') +
+    '<div class="hcard-top">' +
+      `<div class="hcard-eb">Секція ${u.no}</div>` +
+      // Плашки типу та статусу — окремим рядком під номером секції: у вузькій
+      // картці «Дуплекс» + «Продано» не вміщалися поруч із ним.
+      '<div class="hcard-tags">' +
+        `<span class="hcard-tag">${u.type}</span>` +
+        (u.sold ? '<span class="hcard-tag sold">Продано</span>' : '') +
+      '</div>' +
     '</div>' +
     '<div class="hcard-b">' +
       '<div class="hcard-t">' +

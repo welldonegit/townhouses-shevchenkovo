@@ -14,7 +14,8 @@ export function initTabs() {
   const cta = document.querySelector('.rl-cta');
   // На десктопі плашка ремонту вбудована в сітку останньою коміркою (займає два
   // вільні місця в ряду), тому згорнутий набір — 6 фото замість 8. На планшеті
-  // й мобільному вона лишається окремим блоком під галереєю.
+  // й мобільному вона лишається окремим блоком під галереєю. Якщо плашки в
+  // розмітці немає (прихована), десктоп показує всі 8 фото — ряди лишаються повними.
   const desk = window.matchMedia('(min-width:1025px)');
 
   let reType = 'compact';
@@ -23,7 +24,7 @@ export function initTabs() {
 
   const render = () => {
     const set = REMONT[reType] || REMONT.compact;
-    const visible = showAll ? set : set.slice(0, desk.matches ? 6 : 8);
+    const visible = showAll ? set : set.slice(0, desk.matches && cta ? 6 : 8);
     grid.replaceChildren(...visible.map((t, i) => {
       const cell = document.createElement('div');
       cell.className = 'rl-cell';
