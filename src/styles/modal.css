@@ -16,9 +16,22 @@
 .lbody{display:grid;grid-template-columns:488px 512px;min-height:0;flex:1;overflow:hidden;}
 .lmedia{background:var(--c-surface);min-height:0;overflow:hidden;}
 .lmedia img{width:100%;height:100%;object-fit:cover;display:block;}
-.lform{padding:48px;display:flex;flex-direction:column;justify-content:center;}
+/* min-height/overflow: у вузьких за висотою вікнах довга форма (напр. з блоком
+   вибору) не обрізається, а скролиться всередині модалки. */
+.lform{padding:48px;display:flex;flex-direction:column;justify-content:center;min-height:0;overflow-y:auto;}
 .lform-h{margin:0;font:700 42px/44px 'Onest',sans-serif;letter-spacing:-.03em;color:var(--c-ink);}
 .lform-sub{margin:16px 0 0;font:400 16px/24px 'Onest',sans-serif;color:var(--c-text);max-width:426px;}
+/* Блок вибору «Що вас цікавить?» — радіо-чіпи; наповнюється з modal.js. */
+.lopts{margin:28px 0 0;display:flex;flex-direction:column;gap:12px;}
+.lopts-h{font:600 12px/12px 'Onest',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--c-grey);}
+.lopts-list{display:flex;flex-wrap:wrap;gap:8px;}
+.lopt{position:relative;display:inline-flex;}
+.lopt input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer;}
+.lopt span{display:inline-flex;align-items:center;height:40px;padding:0 18px;border:1px solid var(--c-line-field);background:var(--c-field);border-radius:var(--radius-pill);font:500 14px/14px 'Onest',sans-serif;color:var(--c-text);transition:border-color .2s,background .2s,color .2s;}
+.lopt:hover span{border-color:var(--c-green);color:var(--c-ink);}
+.lopt input:checked + span{background:var(--c-green);border-color:var(--c-green);color:var(--c-bg);}
+.lopt input:focus-visible + span{box-shadow:0 0 0 3px rgba(41,66,57,.12);}
+.lopts + .lfields{margin-top:20px;}
 .lfields{display:flex;flex-direction:column;gap:12px;margin:32px 0 0;}
 .lfield{width:100%;height:var(--field-h);border:1px solid var(--c-line-field);background:var(--c-field);border-radius:var(--radius-md);padding:0 24px;font:400 16px/16px 'Onest',sans-serif;color:var(--c-ink);outline:none;transition:border-color .2s,box-shadow .2s;}
 .lfield::placeholder{color:var(--c-grey);}
@@ -98,7 +111,10 @@
   .lbody{grid-template-columns:352px 368px;}
   .lform{padding:32px;}
   .lform-h{font-size:28px;line-height:30px;}
+  .lopts{margin-top:20px;}
+  .lopt span{height:36px;padding:0 14px;font-size:13px;}
   .lfields{margin-top:24px;}
+  .lopts + .lfields{margin-top:16px;}
   .mleft{padding:16px;}
   .mright{padding:24px;}
   .marea{font-size:34px;line-height:34px;}

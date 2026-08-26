@@ -11,8 +11,16 @@ export const FORM_LABELS = {
   callback: 'Замовити дзвінок',
   house: 'Заявка з картки будинку',
   presentation: 'Запис на презентацію',
+  pick: 'Підбір будинку',
   unknown: 'Заявка з сайту',
 };
+
+// Читаемые подписи дополнительных полей формы (всё, что не name/phone/email/
+// comment/house). Ключа нет в карте — выводим сам ключ, как и раньше.
+export const FIELD_LABELS = {
+  interest: 'Цікавить',
+};
+export const fieldLabel = (key) => FIELD_LABELS[key] || key;
 
 // Подпись формы для уведомлений. Для заявки с карточки дома дополняется
 // конкретным домом («Заявка з картки будинку ТАУНХАУС 63,20м²»).
@@ -75,7 +83,7 @@ export function buildMessage(data) {
   if (f.comment || extra.length) {
     lines.push('', 'Додаткові дані:');
     if (f.comment) lines.push(f.comment);
-    for (const [k, v] of extra) lines.push(`${k}: ${v}`);
+    for (const [k, v] of extra) lines.push(`${fieldLabel(k)}: ${v}`);
   }
 
   lines.push(

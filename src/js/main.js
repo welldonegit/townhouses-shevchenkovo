@@ -9,6 +9,7 @@ import { initTabs } from './tabs.js';
 import { initPhoneInputs } from './phone-input.js';
 import { initForms } from './form.js';
 import { initEffects } from './effects.js';
+import { initStickyCta } from './sticky-cta.js';
 // Виджет мессенджеров временно скрыт. Чтобы вернуть — раскомментировать
 // этот импорт и вызов initContactWidget() в init(). Стили и разметка
 // (contact-widget.css / contact-widget.js) остаются на месте нетронутыми.
@@ -25,6 +26,7 @@ function init() {
   initPhoneInputs(); // маска + UI-валидация телефонов до навешивания submit
   initForms();
   initEffects();
+  initStickyCta();  // плаваюча кнопка «Підібрати дім» після першого екрана
   // initContactWidget();  // временно отключён — см. комментарий у импорта
 
   // Единый обработчик Escape (стек как в исходнике: зум → лід → будинок → меню).

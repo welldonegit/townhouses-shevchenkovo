@@ -3,7 +3,7 @@
 // придумывания новых), санитайзим строки и ограничиваем длину.
 import { isValidUaMobile, normalizePhone, PHONE_ERROR_TEXT } from '../../src/shared/phone.js';
 
-const FORM_TYPES = ['price', 'remont', 'instal', 'callback', 'house', 'presentation', 'unknown'];
+const FORM_TYPES = ['price', 'remont', 'instal', 'callback', 'house', 'presentation', 'pick', 'unknown'];
 const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
 
 const clean = (v, max = 300) => (typeof v === 'string' ? v.trim().slice(0, max) : '');

@@ -395,6 +395,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <form class="lform" novalidate>
         <h3 class="lform-h"></h3>
         <p class="lform-sub"></p>
+        <div class="lopts" data-lead-opts style="display:none"></div>
         <div class="lfields">
           <input class="lfield" type="text" name="name" placeholder="Ваше ім’я" autocomplete="name" required>
           <input class="lfield" type="tel" name="phone" placeholder="+38 (0__) ___-__-__" autocomplete="tel" required>
@@ -404,6 +405,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 </div>
+
+<!-- Плаваюча кнопка підбору: з’являється після першого екрана (sticky-cta.js) -->
+<button class="pill pill-accent pick-fab" type="button" data-sticky-cta data-lead="pick"><span class="roll"><span class="roll-in" data-text="Підібрати дім">Підібрати дім</span></span></button>
 
 <!-- Модалка будинку (наповнюється й показується з JS) -->
 <div class="mscrim" id="house-modal" style="display:none">

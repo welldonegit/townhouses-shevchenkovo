@@ -4,7 +4,7 @@
 // без URL (в query token), без токена и без ПДн клиента.
 import { config } from '../config/env.js';
 import { fetchWithTimeout } from '../lib/http.js';
-import { formLabel } from './telegram-service.js';
+import { formLabel, fieldLabel } from './telegram-service.js';
 
 const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
 
@@ -135,7 +135,7 @@ async function createNote(leadId, data, submissionId) {
   const skip = new Set(['name', 'phone', 'email', 'house']);
   const lines = [`<b>Форма:</b> ${escapeHtml(formLabel(data))}`];
   for (const [k, v] of Object.entries(f)) {
-    if (!skip.has(k)) lines.push(`<b>${escapeHtml(k)}:</b> ${escapeHtml(v)}`);
+    if (!skip.has(k)) lines.push(`<b>${escapeHtml(fieldLabel(k))}:</b> ${escapeHtml(v)}`);
   }
   lines.push(`<b>Сторінка:</b> ${escapeHtml(data.page || '')}`);
   lines.push('<b>UTM:</b>');

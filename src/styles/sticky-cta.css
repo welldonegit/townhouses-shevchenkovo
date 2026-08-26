@@ -1,0 +1,15 @@
+/* Плаваюча кнопка «Підібрати дім». Показ керується класом .on з sticky-cta.js.
+   z-index нижче за .mscrim (80) не підходить: кнопка просвічувала б крізь
+   напівпрозорий скрим, тому вона ховається класом .cta-off. */
+.pick-fab{--button-width:248px;position:fixed;right:32px;bottom:32px;z-index:90;opacity:0;visibility:hidden;transform:translateY(14px);transition:opacity .35s ease,transform .35s ease,visibility .35s;box-shadow:0 14px 34px rgba(23,32,29,.24);pointer-events:none;}
+.pick-fab.on{opacity:1;visibility:visible;transform:none;pointer-events:auto;}
+.pick-fab.cta-off{display:none;}
+
+@media (max-width:1024px){
+  .pick-fab{right:20px;bottom:20px;}
+}
+@media (max-width:560px){
+  /* На мобільному — по центру над нижнім краєм, як інші плаваючі кнопки. */
+  .pick-fab{--button-width:calc(100vw - 40px);right:50%;bottom:16px;transform:translateX(50%) translateY(14px);}
+  .pick-fab.on{transform:translateX(50%);}
+}

@@ -11,7 +11,7 @@ const COLLECTIONS = {
 
 let houseModal, leadModal, lightbox;
 let planImg, planwrap, varswitch, mArea, mVal, mLabel, mSold, mPrice, mPriceVal, featsList, roomsBox;
-let leadImg, leadH, leadSub, leadCta, leadForm, houseForm;
+let leadImg, leadH, leadSub, leadCta, leadForm, leadOpts, houseForm;
 
 // состояние модалки будинку
 let activeHouse = null;
@@ -147,10 +147,46 @@ export function openLead(type) {
   leadSub.style.display = cfg.sub ? '' : 'none';
   leadCta.textContent = cfg.cta;
   leadCta.setAttribute('data-text', cfg.cta);
+  renderLeadOptions(cfg.options);
   leadForm.dataset.leadType = type;
   show(leadModal);
   updateScrollLock();
 }
+
+// Необов’язковий блок вибору (радіо-чіпи) над полями. Є лише у тих типів
+// лід-форми, де він заданий в LEAD; для решти блок ховається й очищається,
+// щоб його поле не потрапило у FormData.
+function renderLeadOptions(opts) {
+  if (!leadOpts) return;
+  if (!opts || !opts.items || !opts.items.length) {
+    leadOpts.replaceChildren();
+    leadOpts.style.display = 'none';
+    return;
+  }
+  const title = document.createElement('span');
+  title.className = 'lopts-h';
+  title.textContent = opts.label;
+
+  const list = document.createElement('div');
+  list.className = 'lopts-list';
+  list.append(...opts.items.map((item) => {
+    const label = document.createElement('label');
+    label.className = 'lopt';
+    const input = document.createElement('input');
+    input.type = 'radio';
+    input.name = opts.name;
+    input.value = item;
+    input.checked = item === opts.value;
+    const text = document.createElement('span');
+    text.textContent = item;
+    label.append(input, text);
+    return label;
+  }));
+
+  leadOpts.replaceChildren(title, list);
+  leadOpts.style.display = '';
+}
+
 function closeLead() {
   hide(leadModal);
   updateScrollLock();
@@ -220,6 +256,7 @@ export function initModal() {
   leadSub = leadModal.querySelector('.lform-sub');
   leadCta = leadModal.querySelector('.lsubmit .roll-in');
   leadForm = leadModal.querySelector('.lform');
+  leadOpts = leadModal.querySelector('[data-lead-opts]');
 
   // Триггеры открытия лид-модалки (кнопки с data-lead).
   document.querySelectorAll('[data-lead]').forEach((el) =>

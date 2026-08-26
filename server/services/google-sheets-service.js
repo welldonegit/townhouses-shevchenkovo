@@ -9,7 +9,7 @@
 // В лог не попадают ни секрет, ни данные клиента — только коды состояния.
 import { config } from '../config/env.js';
 import { fetchWithTimeout } from '../lib/http.js';
-import { formLabel } from './telegram-service.js';
+import { formLabel, fieldLabel } from './telegram-service.js';
 
 const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
 
@@ -58,6 +58,17 @@ export async function sendToGoogleSheets(data) {
   return { ok: true };
 }
 
+// Дополнительные поля формы (напр. «Цікавить» из формы підбору) в таблице
+// отдельных колонок не имеют, поэтому дописываются в колонку comment —
+// иначе ответ клиента терялся бы.
+const EXTRA_SKIP = new Set(['name', 'email', 'comment', 'house']);
+function buildComment(f) {
+  const extra = Object.entries(f)
+    .filter(([k, v]) => !EXTRA_SKIP.has(k) && v)
+    .map(([k, v]) => `${fieldLabel(k)}: ${v}`);
+  return [f.comment || '', ...extra].filter(Boolean).join(' · ');
+}
+
 // Только поля уже провалидированного payload — ничего не выдумываем.
 // Порядок ключей совпадает с порядком колонок в таблице.
 // Про дом: он не теряется без additional — formLabel дописывает его к названию
@@ -76,7 +87,7 @@ export function buildPayload(data, secret) {
     name: f.name || '',
     phone: data.phone,
     email: f.email || '',
-    comment: f.comment || '',
+    comment: buildComment(f),
     pageUrl: data.page || '',
     utm,
   };
