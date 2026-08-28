@@ -1,7 +1,7 @@
 // Отправка форм заявки на единый endpoint POST /api/leads.
 // Все поля формы (FormData) + UTM. Loading-состояние, запрет повторной отправки,
 // сообщение об ошибке, редирект на страницу подяки только при реальном успехе.
-import { getUtm } from './utm.js';
+import { getUtm, getGaClientId } from './utm.js';
 import { validatePhone } from './phone-input.js';
 
 const SUBMIT_ERROR = 'Не вдалося надіслати заявку. Спробуйте ще раз пізніше.';
@@ -42,6 +42,7 @@ async function onSubmit(e, form) {
     page: window.location.pathname,
     fields,
     utm: getUtm(),
+    gaClientId: getGaClientId(),
   };
 
   setBusy(form, true);

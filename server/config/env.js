@@ -58,13 +58,15 @@ export const config = {
     // База API. По умолчанию — {companyDomain}.pipedrive.com; переопределяется для тестов.
     apiBase: process.env.PIPEDRIVE_API_BASE
       || (process.env.PIPEDRIVE_COMPANY_DOMAIN ? `https://${process.env.PIPEDRIVE_COMPANY_DOMAIN}.pipedrive.com` : ''),
-    // API-ключи (hash) кастомных Deal-полей под UTM (создаются в Pipedrive вручную).
-    utmFieldKeys: {
-      utm_source: process.env.PIPEDRIVE_UTM_SOURCE_FIELD_KEY || '',
-      utm_medium: process.env.PIPEDRIVE_UTM_MEDIUM_FIELD_KEY || '',
-      utm_campaign: process.env.PIPEDRIVE_UTM_CAMPAIGN_FIELD_KEY || '',
-      utm_content: process.env.PIPEDRIVE_UTM_CONTENT_FIELD_KEY || '',
-      utm_term: process.env.PIPEDRIVE_UTM_TERM_FIELD_KEY || '',
+    // API-ключи (hash) кастомных полей СДЕЛКИ — уходят в custom_fields (API v2).
+    // Сами поля создаются в Pipedrive вручную; hash берётся из GET /api/v2/dealFields.
+    fieldKeys: {
+      utm_source: process.env.PIPEDRIVE_FIELD_UTM_SOURCE || '',
+      utm_medium: process.env.PIPEDRIVE_FIELD_UTM_MEDIUM || '',
+      utm_campaign: process.env.PIPEDRIVE_FIELD_UTM_CAMPAIGN || '',
+      utm_content: process.env.PIPEDRIVE_FIELD_UTM_CONTENT || '',
+      utm_term: process.env.PIPEDRIVE_FIELD_UTM_TERM || '',
+      ga_client_id: process.env.PIPEDRIVE_FIELD_GOOGLE_CLIENT_ID || '',
     },
   },
 };

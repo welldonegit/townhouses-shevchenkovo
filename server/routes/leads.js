@@ -63,6 +63,8 @@ leadsRouter.post('/', rateLimit, async (req, res, next) => {
     console.info('[lead]', {
       submissionId,
       formType: data.formType,
+      // Какие UTM реально дошли с фронта (только имена меток, без значений).
+      utm: Object.keys(data.utm).join(',') || 'none',
       telegram: telegram ? 'ok' : tgVal.error,
       pipedrive: pipedrive ? 'ok' : pdVal.error,
       googleSheets: googleSheets ? 'ok' : gsVal.reason,

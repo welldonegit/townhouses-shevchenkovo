@@ -32,6 +32,11 @@ export function validateLead(body) {
     if (v) utm[key] = v;
   }
 
+  // Google Client ID из cookie _ga — строго «цифры.цифры». Что угодно другое
+  // отбрасываем: в CRM должен попадать либо валидный ID, либо ничего.
+  const gaRaw = typeof b.gaClientId === 'string' ? b.gaClientId.trim() : '';
+  const gaClientId = /^\d{1,20}\.\d{1,20}$/.test(gaRaw) ? gaRaw : '';
+
   return {
     valid: true,
     errors: {},
@@ -41,6 +46,7 @@ export function validateLead(body) {
       phone: normalizePhone(phoneRaw),
       fields,
       utm,
+      gaClientId,
     },
   };
 }

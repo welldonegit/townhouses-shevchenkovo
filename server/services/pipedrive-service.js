@@ -103,9 +103,10 @@ async function createPerson(data, email) {
   return call('person_create', 'POST', '/api/v2/persons', body);
 }
 
-// ── Deal (v1, custom fields = top-level по hash-ключу) ──────────────────
-// Имена полей у Deal отличаются от Lead: владелец — user_id (не owner_id),
-// метки — label (не label_ids). Воронка/этап есть только у Deal.
+// ── Deal (v2: кастомные поля — объект custom_fields по hash-ключу) ──────
+// Именно v2: в v1 кастомные поля кладутся на верхний уровень тела, а объект
+// custom_fields там молча игнорируется. Имена полей в v2 тоже свои:
+// владелец — owner_id (в v1 был user_id), метки — label_ids массивом (в v1 label).
 async function createDeal(data, personId) {
   const cfg = config.pipedrive;
 
@@ -117,14 +118,30 @@ async function createDeal(data, personId) {
   };
   if (cfg.pipelineId) body.pipeline_id = Number(cfg.pipelineId);
   if (cfg.stageId) body.stage_id = Number(cfg.stageId);
-  if (cfg.ownerId) body.user_id = Number(cfg.ownerId);
-  if (cfg.labelIds.length) body.label = cfg.labelIds.join(',');
-  for (const key of UTM_KEYS) {
-    const fieldKey = cfg.utmFieldKeys[key];
-    const value = data.utm && data.utm[key];
-    if (fieldKey && value) body[fieldKey] = value; // пустые UTM не отправляем
+  if (cfg.ownerId) body.owner_id = Number(cfg.ownerId);
+  if (cfg.labelIds.length) body.label_ids = cfg.labelIds;
+
+  // UTM и Google Client ID попадают в поле сделки, только если для метки задан
+  // её hash-ключ. Пришло значение, а ключа нет — молчаливая потеря данных,
+  // поэтому логируем: в Note оно всё равно окажется, но полем не станет.
+  const customFields = {};
+  const noFieldKey = [];
+  const entries = [
+    ...UTM_KEYS.map((key) => [key, data.utm && data.utm[key]]),
+    ['ga_client_id', data.gaClientId],
+  ];
+  for (const [key, value] of entries) {
+    if (!value) continue; // пустые значения не отправляем
+    const fieldKey = cfg.fieldKeys[key];
+    if (fieldKey) customFields[fieldKey] = value;
+    else noFieldKey.push(key);
   }
-  return call('deal_create', 'POST', '/api/v1/deals', body);
+  if (noFieldKey.length) {
+    console.warn('[pipedrive]', { op: 'deal_create', error: 'field_key_missing', keys: noFieldKey.join(',') });
+  }
+  if (Object.keys(customFields).length) body.custom_fields = customFields;
+
+  return call('deal_create', 'POST', '/api/v2/deals', body);
 }
 
 // ── Note (безопасный HTML) ──────────────────────────────────────────────
@@ -144,6 +161,7 @@ async function createNote(dealId, data, submissionId) {
   lines.push(`<b>Сторінка:</b> ${escapeHtml(data.page || '')}`);
   lines.push('<b>UTM:</b>');
   for (const key of UTM_KEYS) lines.push(`${key}: ${escapeHtml(u[key] || '')}`);
+  lines.push(`<b>Google Client ID:</b> ${escapeHtml(data.gaClientId || '')}`);
   lines.push(`<b>ID заявки:</b> ${escapeHtml(submissionId)}`);
   const content = lines.join('<br>');
   return call('note_create', 'POST', '/api/v1/notes', { content, deal_id: dealId });
