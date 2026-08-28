@@ -49,6 +49,10 @@ export const config = {
     apiToken: process.env.PIPEDRIVE_API_TOKEN || '',
     companyDomain: process.env.PIPEDRIVE_COMPANY_DOMAIN || '',
     ownerId: process.env.PIPEDRIVE_OWNER_ID || '',
+    // Воронка и этап, куда попадает сделка. Пусто = воронка/этап по умолчанию
+    // в Pipedrive (сделка всё равно создастся, но не там, где ожидается).
+    pipelineId: process.env.PIPEDRIVE_PIPELINE_ID || '',
+    stageId: process.env.PIPEDRIVE_STAGE_ID || '',
     labelIds: (process.env.PIPEDRIVE_LABEL_IDS || '').split(',').map((s) => s.trim()).filter(Boolean),
     timeoutMs: num(process.env.PIPEDRIVE_TIMEOUT_MS, 10000),
     // База API. По умолчанию — {companyDomain}.pipedrive.com; переопределяется для тестов.

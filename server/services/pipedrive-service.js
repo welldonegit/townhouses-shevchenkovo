@@ -1,7 +1,7 @@
 // Интеграция с Pipedrive (второй независимый канал доставки).
-// Нативный fetch, без SDK. Поток: поиск Person → создание Person → создание Lead
-// → Note. Успех = реально созданный Lead. Логи — только op/status/код/leadId,
-// без URL (в query token), без токена и без ПДн клиента.
+// Нативный fetch, без SDK. Поток: поиск Person → создание Person → создание Deal
+// в заданных воронке/этапе → Note. Успех = реально созданная Deal. Логи — только
+// op/status/код/dealId, без URL (в query token), без токена и без ПДн клиента.
 import { config } from '../config/env.js';
 import { fetchWithTimeout } from '../lib/http.js';
 import { formLabel, fieldLabel } from './telegram-service.js';
@@ -22,18 +22,18 @@ export async function sendToPipedrive(data, submissionId) {
     if (!person) person = await createPerson(data, email);
     if (!person || !person.id) return { ok: false, error: 'person_failed' };
 
-    // 4. Создание Lead, связанного с Person (это и есть критерий успеха).
-    const lead = await createLead(data, person.id, submissionId);
-    if (!lead || !lead.id) return { ok: false, error: 'lead_failed' };
+    // 4. Создание Deal, связанной с Person (это и есть критерий успеха).
+    const deal = await createDeal(data, person.id);
+    if (!deal || !deal.id) return { ok: false, error: 'deal_failed' };
 
-    // 5. Note с доп. данными — ошибка не отменяет успех Lead.
+    // 5. Note с доп. данными — ошибка не отменяет успех Deal.
     try {
-      await createNote(lead.id, data, submissionId);
+      await createNote(deal.id, data, submissionId);
     } catch (noteErr) {
-      console.warn('[pipedrive]', { op: 'note_create', leadId: lead.id, status: noteErr.status || 0, error: noteErr.code || 'note_failed' });
+      console.warn('[pipedrive]', { op: 'note_create', dealId: deal.id, status: noteErr.status || 0, error: noteErr.code || 'note_failed' });
     }
 
-    return { ok: true, leadId: lead.id };
+    return { ok: true, dealId: deal.id };
   } catch (err) {
     console.warn('[pipedrive]', { op: err.op || 'pipedrive', status: err.status || 0, error: err.code || 'error' });
     return { ok: false, error: `${err.op || 'pipedrive'}_${err.code || 'error'}` };
@@ -103,24 +103,28 @@ async function createPerson(data, email) {
   return call('person_create', 'POST', '/api/v2/persons', body);
 }
 
-// ── Lead (v1, custom fields = top-level по hash-ключу) ──────────────────
-async function createLead(data, personId, submissionId) {
+// ── Deal (v1, custom fields = top-level по hash-ключу) ──────────────────
+// Имена полей у Deal отличаются от Lead: владелец — user_id (не owner_id),
+// метки — label (не label_ids). Воронка/этап есть только у Deal.
+async function createDeal(data, personId) {
   const cfg = config.pipedrive;
-  const name = (data.fields && data.fields.name) || data.phone;
 
+  // Тайтл сделки. formLabel — общая с Telegram подпись формы (её не меняем);
+  // имя клиента в тайтл не выносим, оно видно в связанном Person.
   const body = {
-    title: `Заявка з лендингу — ${formLabel(data)} — ${name}`,
+    title: `Сайт Тауни: ${formLabel(data)}`,
     person_id: personId,
-    origin_id: submissionId,
   };
-  if (cfg.ownerId) body.owner_id = Number(cfg.ownerId);
-  if (cfg.labelIds.length) body.label_ids = cfg.labelIds;
+  if (cfg.pipelineId) body.pipeline_id = Number(cfg.pipelineId);
+  if (cfg.stageId) body.stage_id = Number(cfg.stageId);
+  if (cfg.ownerId) body.user_id = Number(cfg.ownerId);
+  if (cfg.labelIds.length) body.label = cfg.labelIds.join(',');
   for (const key of UTM_KEYS) {
     const fieldKey = cfg.utmFieldKeys[key];
     const value = data.utm && data.utm[key];
     if (fieldKey && value) body[fieldKey] = value; // пустые UTM не отправляем
   }
-  return call('lead_create', 'POST', '/api/v1/leads', body);
+  return call('deal_create', 'POST', '/api/v1/deals', body);
 }
 
 // ── Note (безопасный HTML) ──────────────────────────────────────────────
@@ -128,7 +132,7 @@ const escapeHtml = (s) => String(s == null ? '' : s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
-async function createNote(leadId, data, submissionId) {
+async function createNote(dealId, data, submissionId) {
   const f = data.fields || {};
   const u = data.utm || {};
   // house уже вошёл в строку «Форма» — отдельной строкой не дублируем.
@@ -142,5 +146,5 @@ async function createNote(leadId, data, submissionId) {
   for (const key of UTM_KEYS) lines.push(`${key}: ${escapeHtml(u[key] || '')}`);
   lines.push(`<b>ID заявки:</b> ${escapeHtml(submissionId)}`);
   const content = lines.join('<br>');
-  return call('note_create', 'POST', '/api/v1/notes', { content, lead_id: leadId });
+  return call('note_create', 'POST', '/api/v1/notes', { content, deal_id: dealId });
 }
