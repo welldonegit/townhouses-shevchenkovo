@@ -82,7 +82,7 @@ export const HOUSES = [
 export const SECTION_MAP = [1, 4, 4, 3, 1, 4, 4, 3, 0, 2, 0];
 
 // Продані секції таунхаусів: не клікабельні на генплані, позначені плашкою «Продано».
-export const SOLD_SECTIONS = [6, 7, 8, 9];
+export const SOLD_SECTIONS = [1, 2, 6, 7, 8, 9];
 export const isSold = (section) => SOLD_SECTIONS.includes(section);
 
 // Ціни секцій таунхаусів у $, за таблицею від клієнта (індекс = № секції − 1).
