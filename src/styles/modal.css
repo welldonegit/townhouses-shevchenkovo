@@ -69,6 +69,7 @@
 /* Плашка «Продано» над площею — компактна, як у картці будинку.
    .mright — флекс-колонка, поэтому нужны align-self/flex, иначе плашка растянется. */
 .msold{align-self:flex-start;flex:none;width:fit-content;margin:0 0 12px;height:24px;padding:0 12px;border-radius:var(--radius-pill);background:var(--c-sold);border:1px solid var(--c-sold);color:#FFF1EE;font:600 11px/22px 'Onest',sans-serif;letter-spacing:.08em;text-transform:uppercase;}
+.msold.reserved{background:var(--c-reserved);border-color:var(--c-reserved);color:#FFF8EC;}
 .marea{margin:0;font:700 56px/56px 'Onest',sans-serif;letter-spacing:-.035em;color:var(--c-ink);}
 .marea span{font-weight:700;font-size:1em;letter-spacing:-.035em;color:var(--c-ink);margin-left:8px;}
 /* Высота блока задана явно; 2px бордеров входят в неё (box-sizing:border-box). */

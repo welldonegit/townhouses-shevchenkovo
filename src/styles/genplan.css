@@ -29,6 +29,10 @@
 .gp-spot.sold{background:var(--c-sold-soft);border-color:var(--c-sold);cursor:default;}
 .gp-spot.sold:hover{background:var(--c-sold-soft);border-color:var(--c-sold);box-shadow:none;}
 .gp-spot.sold .gp-more{opacity:1;color:#FFF1EE;}
+/* Заброньована секція: як продана, але бурштинова. */
+.gp-spot.reserved{background:var(--c-reserved-soft);border-color:var(--c-reserved);cursor:default;}
+.gp-spot.reserved:hover{background:var(--c-reserved-soft);border-color:var(--c-reserved);box-shadow:none;}
+.gp-spot.reserved .gp-more{opacity:1;color:#FFF8EC;}
 @media (max-width:1024px){
   .gp-head{margin-bottom:20px;}
   .gp-title{font-size:28px;line-height:30px;}

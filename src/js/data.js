@@ -81,9 +81,15 @@ export const HOUSES = [
 
 export const SECTION_MAP = [1, 4, 4, 3, 1, 4, 4, 3, 0, 2, 0];
 
-// Продані секції таунхаусів: не клікабельні на генплані, позначені плашкою «Продано».
-export const SOLD_SECTIONS = [1, 2, 6, 7, 8, 9];
-export const isSold = (section) => SOLD_SECTIONS.includes(section);
+// Продані та заброньовані секції таунхаусів: не клікабельні на генплані,
+// позначені плашкою «Продано» / «Заброньовано», ціна й форма в модалці приховані.
+export const SOLD_SECTIONS = [1, 2, 6, 7, 9, 11];
+export const RESERVED_SECTIONS = [8];
+// Статус секції: 'sold' | 'reserved' | '' (у продажу).
+export const statusOf = (section) =>
+  SOLD_SECTIONS.includes(section) ? 'sold'
+    : RESERVED_SECTIONS.includes(section) ? 'reserved' : '';
+export const STATUS_LABELS = { sold: 'Продано', reserved: 'Заброньовано' };
 
 // Ціни секцій таунхаусів у $, за таблицею від клієнта (індекс = № секції − 1).
 // Ціна прив'язана до секції, а не до типу планування.

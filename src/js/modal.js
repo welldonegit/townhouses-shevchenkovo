@@ -1,6 +1,6 @@
 // Оверлеи: модалка будинку (варіанти + зум плану), лід-модалка, лайтбокс ремонту.
 // Общий scroll-lock и стек Escape. Слушатели навешиваются один раз в initModal().
-import { HOUSES, PLANS, DUPLEXES, DUPLEX_PLANS, LEAD, priceOf } from './data.js';
+import { HOUSES, PLANS, DUPLEXES, DUPLEX_PLANS, LEAD, priceOf, STATUS_LABELS } from './data.js';
 
 // Модалка обслуживает две коллекции с одинаковой формой записей (см. data.js).
 // Отличаются только подписи: тип дома и заголовок над номером секции.
@@ -16,7 +16,7 @@ let leadImg, leadH, leadSub, leadCta, leadForm, leadOpts, houseForm;
 // состояние модалки будинку
 let activeHouse = null;
 let activeCollection = 'houses';
-let activeSold = false;
+let activeStatus = '';
 let activeSection = 0;
 let rawVariant = 0;
 let zoomed = false;
@@ -38,12 +38,13 @@ function closeMenuDom() {
 }
 
 // ── Модалка будинку ─────────────────────────────────────────────────────
-// opts.sold — картка/секція, з якої відкрили модалку, продана (плашка «Продано»).
+// opts.status — статус картки/секції, з якої відкрили модалку: 'sold' | 'reserved' | ''
+// (плашка «Продано» / «Заброньовано»).
 // opts.section — номер секції таунхауса: від нього залежить ціна.
 export function openHouse(i, collection = 'houses', opts = {}) {
   activeCollection = COLLECTIONS[collection] ? collection : 'houses';
   activeHouse = i;
-  activeSold = !!opts.sold;
+  activeStatus = opts.status || '';
   activeSection = opts.section || 0;
   rawVariant = 0;
   zoomed = false;
@@ -69,9 +70,14 @@ function renderHouse() {
   mArea.replaceChildren(document.createTextNode(c.label + ' ' + h.area), unit('м²'));
   if (mLabel) mLabel.textContent = c.secLabel;
   mVal.textContent = h.sections;
-  if (mSold) mSold.style.display = activeSold ? '' : 'none';
+  const activeSold = !!activeStatus;
+  if (mSold) {
+    mSold.style.display = activeSold ? '' : 'none';
+    mSold.textContent = STATUS_LABELS[activeStatus] || '';
+    mSold.classList.toggle('reserved', activeStatus === 'reserved');
+  }
   // Ціна: у дуплексів спільна для всіх секцій, у таунхаусів — своя на кожну секцію.
-  // На проданих секціях ціну ховаємо.
+  // На проданих і заброньованих секціях ціну ховаємо.
   const price = activeSold ? '' : (h.price || (activeSection ? priceOf(activeSection) : ''));
   if (mPrice) {
     if (mPriceVal) mPriceVal.textContent = price || '';

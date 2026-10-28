@@ -1,24 +1,24 @@
 // Слайдер будинків: рендер карток, drag-to-scroll, prev/next, прогрес, лічильник.
 // Таби перемикають колекції (усі будинки / таунхауси / дуплекси); розмітка табів спільна з блоком ремонту.
-import { HOUSES, SECTION_MAP, PLANS, DUPLEXES, DUPLEX_PLANS, isSold } from './data.js';
+import { HOUSES, SECTION_MAP, PLANS, DUPLEXES, DUPLEX_PLANS, statusOf, STATUS_LABELS } from './data.js';
 import { openHouse } from './modal.js';
 
 // Секція генплану → тип будинку (кілька секцій можуть мати однакове планування).
 const townUnits = () => SECTION_MAP.map((hi, k) => {
   const section = k + 1;
-  const sold = isSold(section);
+  const status = statusOf(section);
   return {
     no: '№ ' + String(section).padStart(2, '0'),
-    type: 'Таунхаус', sold,
+    type: 'Таунхаус', status,
     // Ціни на картках не показуємо — тільки в модалці планування.
     area: HOUSES[hi].area, spec: HOUSES[hi].spec, plan: PLANS[hi][0],
-    open: () => openHouse(hi, 'houses', { sold, section }),
+    open: () => openHouse(hi, 'houses', { status, section }),
   };
 });
 
 const duplexUnits = () => DUPLEXES.map((d, k) => ({
   no: d.sections,
-  type: 'Дуплекс', sold: false,
+  type: 'Дуплекс', status: '',
   area: d.area, spec: d.spec, plan: DUPLEX_PLANS[k][0],
   open: () => openHouse(k, 'duplex'),
 }));
@@ -137,7 +137,7 @@ function buildCard(u) {
       // картці «Дуплекс» + «Продано» не вміщалися поруч із ним.
       '<div class="hcard-tags">' +
         `<span class="hcard-tag">${u.type}</span>` +
-        (u.sold ? '<span class="hcard-tag sold">Продано</span>' : '') +
+        (u.status ? `<span class="hcard-tag ${u.status}">${STATUS_LABELS[u.status]}</span>` : '') +
       '</div>' +
     '</div>' +
     '<div class="hcard-b">' +

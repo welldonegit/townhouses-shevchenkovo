@@ -1,16 +1,16 @@
 // Хотспоти генплану (таунхауси desktop/mobile + дуплекси) → відкриття модалки будинку.
 // Таби перемикають генплани; розмітка табів спільна з блоком ремонту (.rl-tab).
-import { GP_POS, GP_POS_MOB, GP_NO, SECTION_MAP, DP_POS, DP_POS_MOB, DP_NO, isSold } from './data.js';
+import { GP_POS, GP_POS_MOB, GP_NO, SECTION_MAP, DP_POS, DP_POS_MOB, DP_NO, statusOf, STATUS_LABELS } from './data.js';
 import { openHouse } from './modal.js';
 
 export function initGenplan() {
   // Таунхауси: номер секції на генплані → індекс типу будинку.
   const openTown = (k) => {
     const section = GP_NO[k];
-    openHouse(SECTION_MAP[section - 1], 'houses', { section, sold: isSold(section) });
+    openHouse(SECTION_MAP[section - 1], 'houses', { section, status: statusOf(section) });
   };
-  renderSpots(document.querySelector('.gp-desk'), GP_POS, GP_NO, openTown, isSold);
-  renderSpots(document.querySelector('.gp-mob'), GP_POS_MOB, GP_NO, openTown, isSold);
+  renderSpots(document.querySelector('.gp-desk'), GP_POS, GP_NO, openTown, statusOf);
+  renderSpots(document.querySelector('.gp-mob'), GP_POS_MOB, GP_NO, openTown, statusOf);
 
   // Дуплекси: кожен хотспот — окрема секція, індекс збігається з порядком DP_POS.
   const openDuplex = (k) => openHouse(k, 'duplex');
@@ -20,19 +20,20 @@ export function initGenplan() {
   initGenplanTabs();
 }
 
-// sold: перевірка «секція продана» для цієї колекції (у дуплексів проданих немає).
-function renderSpots(stage, positions, numbers, onPick, sold = () => false) {
+// status: статус секції для цієї колекції — 'sold' | 'reserved' | '' (у дуплексів статусів немає).
+function renderSpots(stage, positions, numbers, onPick, status = () => '') {
   if (!stage) return;
   positions.forEach((p, k) => {
-    const isDone = sold(numbers[k]);
+    const st = status(numbers[k]);
+    const isDone = !!st;
     const btn = document.createElement('button');
-    btn.className = isDone ? 'gp-spot sold' : 'gp-spot';
+    btn.className = isDone ? 'gp-spot ' + st : 'gp-spot';
     btn.style.left = p[0]; btn.style.top = p[1];
     btn.style.width = p[2]; btn.style.height = p[3];
     btn.innerHTML =
       `<span class="gp-badge">${String(numbers[k]).padStart(2, '0')}</span>` +
-      (isDone ? '<span class="gp-more">Продано</span>' : '<span class="gp-more">Детальніше</span>');
-    // Продана секція — не клікабельна, планування з генплану не відкривається.
+      (isDone ? `<span class="gp-more">${STATUS_LABELS[st]}</span>` : '<span class="gp-more">Детальніше</span>');
+    // Продана / заброньована секція — не клікабельна, планування з генплану не відкривається.
     if (isDone) { btn.disabled = true; return void stage.appendChild(btn); }
     btn.addEventListener('click', () => onPick(k));
     stage.appendChild(btn);

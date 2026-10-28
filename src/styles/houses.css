@@ -21,6 +21,7 @@
 .hcard-tags{display:flex;flex-wrap:wrap;gap:6px;}
 .hcard-tag{display:block;height:24px;padding:0 12px;border-radius:var(--radius-pill);background:rgba(245,242,234,.18);border:1px solid rgba(245,242,234,.5);color:#F8F4EC;font:600 11px/22px 'Onest',sans-serif;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;}
 .hcard-tag.sold{background:var(--c-sold);border-color:var(--c-sold);color:#FFF1EE;}
+.hcard-tag.reserved{background:var(--c-reserved);border-color:var(--c-reserved);color:#FFF8EC;}
 .hcard-b{position:absolute;left:24px;right:24px;bottom:24px;z-index:2;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;}
 .hcard-t{color:#F8F4EC;}
 .hcard-t .a{font:700 34px/34px 'Onest',sans-serif;letter-spacing:-.02em;}
